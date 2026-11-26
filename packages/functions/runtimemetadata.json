@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "3.0",
+  "functions": [
+    {
+      "functionName": "consultarBcra",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "cuit",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [],
+      "capabilities": []
+    }
+  ]
+}

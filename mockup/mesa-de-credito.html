@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark">
+<title>Folio · Mesa de crédito</title>
+<style>
+:root{color-scheme:light;--bg:#f5f6f2;--paper:#fff;--ink:#172b28;--sub:#53655f;--line:#dce2db;--accent:#165c4e;--soft:#edf3ee;--hover:#f4f7f3;--gold:#885812;--purple:#53447a;--shadow:0 2px 4px #1c322409;--radius:16px;--font:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+:root.dark{color-scheme:dark;--bg:#13211e;--paper:#1d2c28;--ink:#eaf2ea;--sub:#b4c6bc;--line:#384a41;--accent:#a6d9bf;--soft:#2a4035;--hover:#293c32;--gold:#ffd486;--purple:#d7c9f8}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--font);-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #ce8839;outline-offset:3px}button{border:0;background:none}h1,h2,h3,p{margin:0}h1,h2,h3{line-height:1.13}h1{font-size:clamp(34px,4vw,54px);letter-spacing:-.064em;font-weight:620}h2{font-size:23px;letter-spacing:-.045em;font-weight:630}h3{font-size:16px;letter-spacing:-.025em}.ico{display:inline-block;width:18px;height:18px;vertical-align:middle;flex-shrink:0}.brand{display:flex;align-items:center;gap:9px;letter-spacing:-.07em;font-size:31px;font-weight:760}.mark{width:32px;height:34px;color:var(--accent)}.top{background:var(--paper);border-bottom:1px solid var(--line)}.header,main{max-width:1536px;margin:auto;padding-inline:clamp(20px,4.5vw,76px)}.header{height:76px;display:flex;align-items:center;gap:clamp(20px,4vw,72px)}.nav{display:flex;height:100%;gap:24px}.nav button{border-bottom:3px solid transparent;display:flex;align-items:center;gap:7px;font-weight:580;padding:3px 1px 0;color:var(--sub)}.nav button.active{color:var(--accent);border-bottom-color:var(--accent)}.header-right{display:flex;align-items:center;gap:14px;margin-left:auto}.demo,.status,.tag{display:inline-flex;align-items:center;gap:7px;vertical-align:middle;white-space:nowrap;font-size:12px;font-weight:600}.demo{border:1px solid var(--line);background:var(--hover);padding:5px 10px;border-radius:20px;color:var(--sub)}.dot,.status:before{width:7px;height:7px;background:currentColor;border-radius:50%;display:inline-block}.demo .dot{background:#b17c36}.icon-btn{border:1px solid var(--line);border-radius:50%;width:35px;height:35px;display:inline-grid;place-items:center;background:var(--paper)}.avatar{border-radius:50%;width:35px;height:35px;background:#dbe8d4;color:#31533d;display:grid;place-items:center;font-size:12px;font-weight:700}.muted,.sub{color:var(--sub)}.sub{font-size:14px;margin-top:8px}main{padding-block:34px 50px}.hero{display:flex;gap:20px;align-items:flex-end;justify-content:space-between;margin:0 0 24px}.eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:var(--sub);margin-bottom:9px;display:flex;align-items:center;gap:7px}.eyebrow .ico{width:14px;height:14px}.btn,.primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 15px;border:1px solid var(--line);background:var(--paper);border-radius:9px;font-weight:600}.primary{background:#205947;border-color:#205947;color:white}.btn:hover,.icon-btn:hover{background:var(--hover)}.primary:hover{background:#194b3b}.stats{display:grid;grid-template-columns:1.15fr repeat(3,1fr);gap:12px;margin-bottom:25px}.metric,.box{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.metric{position:relative;overflow:hidden;padding:17px 20px;text-align:left;min-height:125px}.metric:hover{border-color:var(--accent)}.metrichead{display:flex;align-items:center;justify-content:space-between;gap:5px;font-weight:600}.metrichead .ico{color:var(--sub)}.metric strong{font-size:39px;font-weight:600;letter-spacing:-.055em;line-height:1.1;display:block;margin:8px 0 3px;font-variant-numeric:tabular-nums}.metric small{color:var(--sub);font-size:12px}.metric.featured{background:#154d3f;color:#fff;border-color:#154d3f;isolation:isolate}.featured .metrichead .ico,.featured small{color:#d8eddf}.featured:after{content:"";position:absolute;inset:25% -30% -120% 31%;border-radius:49%;background:repeating-radial-gradient(ellipse at center,transparent 0 7px,#9cd1ae33 8px 9px,transparent 10px 14px);transform:rotate(-31deg);z-index:-1}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,26%);align-items:start;gap:18px}.box{overflow:hidden}.pad,.boxhead{padding:21px 22px}.boxhead{display:flex;justify-content:space-between;align-items:center;gap:10px}.count{font-size:12px;padding:3px 8px;background:var(--soft);color:var(--accent);border-radius:20px;margin-left:7px;vertical-align:middle}.tools{display:flex;align-items:center;gap:9px;padding:0 22px 15px}.search{display:flex;align-items:center;gap:8px;background:var(--hover);border-radius:8px;border:1px solid var(--line);padding:0 10px;color:var(--sub);flex:1;min-width:130px}.search input{background:none;border:none;min-width:0;width:100%;height:36px;color:var(--ink)}select,input.field{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}.tools select{max-width:156px;font-size:13px}.tabs{display:flex;gap:16px;padding:0 22px;border-bottom:1px solid var(--line)}.tabs button{padding:9px 0 10px;border-bottom:2px solid transparent;color:var(--sub);font-size:13px}.tabs .active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse}th{background:var(--hover);color:var(--sub);font-size:10px;font-weight:650;text-transform:uppercase;letter-spacing:.08em;text-align:left}td,th{padding:10px 8px}td:first-child,th:first-child{padding-left:22px}td:last-child,th:last-child{padding-right:18px}td{border-top:1px solid var(--line);font-size:13px}tbody tr{cursor:pointer}tbody tr:hover{background:var(--hover)}.client{display:flex;align-items:center;gap:10px;text-align:left;padding:2px 0;font-weight:650}.initial{height:34px;width:34px;border-radius:9px;display:inline-grid;place-items:center;font-size:11px;font-weight:700;letter-spacing:.03em;flex:none}.initial.i0{background:#e1ebe2;color:#325b47}.initial.i1{background:#ebe5f5;color:#655477}.initial.i2{background:#f5ead5;color:#735328}.initial.i3{background:#e2ebf2;color:#446477}.client small,.small{display:block;font-size:11px;font-weight:470;color:var(--sub);margin-top:2px}.status{font-size:11px;padding:4px 8px;border-radius:6px}.status:before{content:"";width:6px;height:6px}.s0{color:#205c49;background:#e2f1e8}.s1{color:#844d13;background:#fcf0d8}.s2{color:#655087;background:#eee8f7}.s3{color:#355f7d;background:#e6eff6}.s4{color:#525e54;background:#e8ebe7}.due{white-space:nowrap}.urgent{color:var(--gold);font-weight:600}.tableend{padding:12px 22px;border-top:1px solid var(--line);font-size:12px;color:var(--sub);display:flex;align-items:center;justify-content:space-between}.pager{display:flex;align-items:center;gap:6px}.pager button{border:1px solid var(--line);border-radius:6px;height:27px;width:29px}.pager button:disabled{opacity:.3;cursor:default}.side{display:grid;gap:16px}.side h2{font-size:20px}.dateitem{display:flex;align-items:center;text-align:left;gap:12px;width:100%;padding:14px 0;border-top:1px solid var(--line)}.dateitem:hover .eventname{text-decoration:underline}.datebox{height:43px;width:42px;display:grid;align-content:center;justify-items:center;border:1px solid var(--line);border-radius:9px;line-height:1.05;background:var(--hover);flex:none}.datebox small{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sub)}.datebox b{font-size:20px}.eventname{font-size:13px;font-weight:620}.agenda .pad{padding-block:0 6px}.right-arrow{margin-left:auto;color:var(--sub);width:15px}.ai-card{position:relative;isolation:isolate;overflow:hidden;border:1px solid #dcd6e8;border-radius:var(--radius);background:#efecf6;color:#312c42;padding:20px 22px}.ai-card:after{content:"";position:absolute;z-index:-1;right:-56px;top:-93px;width:190px;height:190px;transform:rotate(30deg);border-radius:32%;background:repeating-radial-gradient(ellipse at center,transparent 0 11px,#b5a8cc66 12px 13px,transparent 14px 18px)}.ai-card .leadicon{color:#69518d;margin-bottom:13px}.ai-card p{max-width:265px;font-size:13px;color:#60576f;margin:8px 0 13px}.textbtn{display:inline-flex;align-items:center;gap:7px;padding:0;font-size:13px;font-weight:650;color:var(--accent)}.ai-card .textbtn{color:#574370}.leadicon{display:inline-flex;align-items:center;gap:6px}.leadicon .ico{width:23px;height:23px}.empty{text-align:center;padding:36px;color:var(--sub)}dialog{padding:0;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:18px;width:min(630px,calc(100% - 28px));max-height:88dvh;box-shadow:0 20px 100px #102e2440}dialog::backdrop{background:#13231f70}.dialogbody{padding:26px}.dialogbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.dialogbar h2{margin-top:8px;font-size:29px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden;margin:16px 0}.detail-grid div{padding:12px;background:var(--paper)}.detail-grid small{display:block;color:var(--sub);margin-bottom:3px}.detailtab{margin-top:14px;padding:0}.detailpane{min-height:145px;padding:15px 0}.callout,.answer{background:var(--soft);border-radius:10px;padding:14px}.stack{display:grid;gap:12px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{border-radius:15px;border:1px solid var(--line);font-size:12px;padding:6px 10px}.answer{margin:12px 0;white-space:pre-line}.question{font-weight:650}.forms label{display:grid;gap:4px;font-weight:550}.forms input,.forms select{width:100%}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.mobile{display:none}.flatlist{max-width:850px}.flatlist .dateitem{padding:16px 22px}.dark .featured{background:#215340}.tag{color:var(--sub);font-size:11px}.aiform{display:flex;gap:6px}.aiform input{flex:1;min-width:0}.due-note{font-size:12px;color:var(--sub);margin-top:8px}.details-footer{margin-top:9px;border-top:1px solid var(--line);padding-top:14px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:white;background:#234d3d;padding:9px 18px;border-radius:12px;z-index:10}.timeline{padding-left:18px}.timeline li{padding:4px}.skip{position:fixed;left:-9999px}.skip:focus{left:2px;top:2px;background:var(--paper);z-index:3}
+@media(min-width:1520px){main{padding-top:45px}.metric{min-height:140px}td{padding-block:15px}}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 240px}.header,main{padding-inline:24px}.tools{flex-wrap:wrap}.hide-mid{display:none}.nav{gap:16px}}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.side{grid-template-columns:1.1fr 1fr}.stats{gap:8px}.metric{padding:13px}.header{gap:20px}.nav button .ico{display:none}.nav{gap:13px}.header-right{gap:6px}.avatar{display:none}.hide-mid{display:table-cell}}
+@media(max-width:620px){.header,main{padding-inline:16px}.header{height:auto;flex-wrap:wrap;gap:0;justify-content:space-between;padding-top:8px}.brand{font-size:26px}.mark{height:27px;width:28px}.nav{order:3;width:100%;justify-content:space-between;height:43px}.nav button{font-size:13px}.header-right{margin-left:0}.header-right .ico{height:15px}.icon-btn{height:30px;width:30px}.demo{font-size:10px}.hero{align-items:start;gap:9px}.hero .primary{font-size:12px;padding:7px 9px;min-height:36px}.eyebrow{font-size:9px}.hero .sub{font-size:12px}main{padding-top:21px}.stats{grid-template-columns:1fr 1fr;margin-bottom:15px}.metric{min-height:98px;padding:11px 13px}.metrichead{font-size:12px}.metrichead .ico{width:15px}.metric strong{font-size:30px;margin:5px 0 0}.metric small{font-size:10px}.side{grid-template-columns:1fr}.tools{padding:0 13px 10px;gap:6px}.tools .search{flex-basis:100%}.tools select{flex:1;max-width:none}.boxhead{padding:15px}.tabs{padding-inline:13px}.tableend{padding-inline:13px}.hide-small,.hide-mid{display:none}.mobile{display:block}.client{font-size:12px;gap:7px}.client .initial{height:28px;width:28px;font-size:9px}.client small{font-size:10px}td,th{padding-inline:4px}td:first-child,th:first-child{padding-left:12px}td:last-child,th:last-child{padding-right:10px}.status{font-size:10px;padding:4px 5px}.dialogbody{padding:18px}.hero h1{font-size:33px}.detail-grid{font-size:13px}.textbtn{font-size:12px}}
+.workspaces{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 17px}.workspaces>span{font-size:12px;color:var(--sub);margin-right:5px}.workspaces button{border:1px solid var(--line);background:var(--paper);border-radius:24px;padding:6px 12px;font-size:12px}.workspaces button[aria-pressed=true]{color:var(--accent);background:var(--soft);border-color:var(--accent);font-weight:650}
+dialog.case-dialog{width:min(1040px,calc(100% - 36px));max-height:92dvh;background:var(--bg);overscroll-behavior:contain}.case-dialog .dialogbody{padding:0}.case-head{background:var(--paper);padding:23px 28px 0;border-bottom:1px solid var(--line)}.case-head .dialogbar{margin:0}.case-head h2{font-size:36px;letter-spacing:-.055em}.case-head .tag{gap:8px}.case-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;color:var(--sub);font-size:12px;margin:11px 0 15px}.case-head .tabs{margin:0;border:0;gap:20px;overflow-x:auto}.case-head .tabs button{white-space:nowrap}.case-dialog .detailpane{padding:21px 24px 24px;min-height:315px}.case-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(225px,.92fr);align-items:start;gap:15px}.case-layout>*{min-width:0}.case-card{padding:18px 20px;background:var(--paper);border:1px solid var(--line);border-radius:13px}.case-card h3{font-size:20px;margin-bottom:5px}.case-card h4{font-size:14px;margin:0 0 8px}.case-card .eyebrow{margin-bottom:6px}.case-card .small{font-size:12px}.proposal-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0 10px}.proposal{padding:12px 14px;background:var(--hover);border:1px solid var(--line);border-radius:10px}.proposal.credit{background:var(--soft)}.proposal span,.proposal small{display:block;color:var(--sub);font-size:12px}.proposal b{font-size:30px;letter-spacing:-.055em;line-height:1.25}.delta{padding:8px 10px;border-left:3px solid var(--accent);background:var(--hover);font-size:13px}.compare{margin-top:12px;table-layout:fixed}.compare th,.compare td{padding:8px 6px;font-size:12px;vertical-align:top}.compare th:first-child,.compare td:first-child{padding-left:0}.compare tbody tr{cursor:default}.compare thead th{background:none;text-transform:none;letter-spacing:0}.source-link{display:flex;width:100%;text-align:left;align-items:center;gap:9px;padding:12px 0;border-bottom:1px solid var(--line)}.source-link:last-child{border:0;padding-bottom:0}.source-link strong{font-size:14px}.source-link .ico:last-child{margin-left:auto}.source-ico{width:30px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--soft);color:var(--accent);flex:none}.case-card .primary{margin-top:12px}.meta-list{margin:12px 0 0}.meta-list div{display:flex;justify-content:space-between;gap:15px;padding:6px 0;border-top:1px solid var(--line);font-size:12px}.meta-list dt{color:var(--sub)}.meta-list dd{margin:0;font-weight:580;text-align:right}.opinion-form{display:grid;gap:14px}.opinion-form label{display:grid;gap:5px;font-size:13px;font-weight:600}.opinion-form textarea{width:100%;resize:vertical;min-height:105px;font:inherit;padding:10px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px}.opinion-form select{width:100%}.signed{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}.case-card .foot{margin-top:0}.case-card .foot button{margin-top:0}.case-dialog .status{vertical-align:baseline}.case-titlebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.case-dialog .ai-form{max-width:800px}.source-line{margin-top:10px}.case-dialog .stack{align-content:start}.case-dialog .eyebrow{color:var(--accent)}
+@media(max-width:690px){dialog.case-dialog{width:calc(100% - 12px);max-height:96dvh}.case-head{padding:16px 14px 0}.case-head h2{font-size:29px}.case-head .tabs{gap:16px}.case-dialog .detailpane{padding:12px}.case-layout{grid-template-columns:1fr}.case-card{padding:15px}.case-meta{gap:5px 10px}.proposal{padding:10px}.compare th,.compare td{font-size:11px}.workspaces{gap:4px}.workspaces button{font-size:11px;padding:5px 8px}.case-dialog .foot{flex-wrap:wrap}.case-dialog .detail-grid{grid-template-columns:1fr 1fr}}
+.py-track{list-style:none;margin:18px 0 0;padding:0}.py-track li{display:grid;grid-template-columns:52px 12px 1fr;gap:9px;position:relative;padding:0 0 13px}.py-track li:last-child{padding-bottom:0}.py-track time{font-size:12px;font-weight:650;color:var(--accent);padding-top:1px}.py-track i{position:relative;margin-top:4px;height:10px;width:10px;border-radius:50%;background:var(--accent)}.py-track li:not(:last-child):before{content:'';position:absolute;top:12px;bottom:-2px;left:65px;width:2px;background:var(--line)}.py-track .waiting i,.py-track .scheduled i{background:var(--paper);border:2px solid var(--sub)}.py-track .waiting time{font-size:10px;color:var(--sub)}.py-track small{display:block;font-size:10px;letter-spacing:.05em;color:var(--sub)}.py-track p{margin-top:2px;font-size:12px}.sheet-fields summary,.chart-data summary{cursor:pointer;color:var(--accent);font-weight:600}.chart-title,.lender>div:first-child{display:flex;justify-content:space-between;align-items:center;gap:10px}.holder-select{display:grid;gap:3px;color:var(--sub);font-size:12px}.bcra-stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:var(--paper);border-radius:12px;overflow:hidden}.bcra-stats>div{padding:13px 15px;border-left:1px solid var(--line)}.bcra-stats>div:first-child{border:0;background:var(--soft)}.bcra-stats strong{font-size:28px;color:var(--accent);display:block;line-height:1.2}.bcra-stats small,.report-charts small{color:var(--sub);font-size:12px}.report-charts{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px}.report-charts h3{font-size:17px}.bars{display:flex;gap:8px;height:118px;margin-top:15px}.yscale{display:flex;flex-direction:column;justify-content:space-between;font-size:10px;color:var(--sub);text-align:right;min-width:30px}.hist-plot{flex:1;display:flex;align-items:flex-end;gap:3px;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 50%;border-bottom:1px solid var(--line)}.hist-col{height:100%;flex:1;display:flex;align-items:flex-end}.hist-col i{width:100%;background:#538872;border-radius:2px 2px 0 0}.hist-col:last-child i{background:var(--accent)}.xscale{display:flex;justify-content:space-between;margin:3px 0 6px 38px;font-size:11px;color:var(--sub)}.chart-data{border-top:1px solid var(--line);padding-top:6px;font-size:12px}.lender{margin-top:15px}.lender b,.lender strong{font-size:12px}.lender .track{height:9px;margin:4px 0;background:var(--soft);border-radius:6px;overflow:hidden}.lender i{display:block;height:100%;background:var(--accent)}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.demo-shortcut{margin-bottom:12px}
+@media(max-width:690px){.report-charts{grid-template-columns:1fr}.bcra-stats>div{padding:9px 7px}.bcra-stats small{font-size:10px}.bcra-stats strong{font-size:23px}.chart-title{flex-wrap:wrap}.py-track li{padding-bottom:9px}.case-dialog .compare{overflow-wrap:anywhere}}
+.live-access,.live-form{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.live-access{padding:12px 16px;border:1px solid var(--line);background:var(--paper);border-radius:10px;margin-bottom:14px;justify-content:space-between}.live-access small{display:block;color:var(--sub)}.live-access a{text-decoration:none}.live-form{margin:12px 0;align-items:flex-end}.live-form label{display:grid;gap:4px}.live-form .primary{margin:0}.live-form input{height:40px}.live-form button:disabled{opacity:.65;cursor:wait}</style></head>
+<body><a class="skip" href="#main">Ir al contenido</a><header class="top"><div class="header"><div class="brand"><svg class="mark" viewBox="0 0 36 36" aria-hidden="true"><path d="M3 12 18 4l15 8-15 8zM3 19l5-2.7L18 22l10-5.7 5 2.7-15 8zM3 26l5-2.7L18 29l10-5.7 5 2.7-15 8z" fill="currentColor"/></svg>Folio</div><nav class="nav" aria-label="Navegación principal"></nav><div class="header-right"><span class="demo"><i class="dot"></i>Datos ficticios</span><button class="icon-btn" id="theme" aria-label="Cambiar tema"></button><span class="avatar" title="Analista de demostración">AL</span></div></div></header><main id="main" tabindex="-1"></main><dialog id="modal"><div class="dialogbody" id="modalBody"></div></dialog><div id="feedback" role="status"></div>
+<script>
+const icons = {"Inbox":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-inbox ico\" aria-hidden=\"true\"><polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"></polyline><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"></path></svg>","CalendarDays":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-calendar-days ico\" aria-hidden=\"true\"><path d=\"M8 2v3\"></path><path d=\"M16 2v3\"></path><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"></rect><path d=\"M3 9h18\"></path><path d=\"M8 13h.01\"></path><path d=\"M12 13h.01\"></path><path d=\"M16 13h.01\"></path><path d=\"M8 17h.01\"></path><path d=\"M12 17h.01\"></path><path d=\"M16 17h.01\"></path></svg>","Sparkles":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-sparkles lucide-stars ico\" aria-hidden=\"true\"><path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"></path><path d=\"M20 2v4\"></path><path d=\"M22 4h-4\"></path><circle cx=\"4\" cy=\"20\" r=\"2\"></circle></svg>","Moon":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-moon ico\" aria-hidden=\"true\"><path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"></path></svg>","Sun":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-sun ico\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"></circle><path d=\"M12 2v2\"></path><path d=\"M12 20v2\"></path><path d=\"m4.93 4.93 1.41 1.41\"></path><path d=\"m17.66 17.66 1.41 1.41\"></path><path d=\"M2 12h2\"></path><path d=\"M20 12h2\"></path><path d=\"m6.34 17.66-1.41 1.41\"></path><path d=\"m19.07 4.93-1.41 1.41\"></path></svg>","Plus":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-plus ico\" aria-hidden=\"true\"><path d=\"M5 12h14\"></path><path d=\"M12 5v14\"></path></svg>","Folders":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-folders ico\" aria-hidden=\"true\"><path d=\"M20 5a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2.5a1.5 1.5 0 0 1 1.2.6l.6.8a1.5 1.5 0 0 0 1.2.6z\"></path><path d=\"M3 8.268a2 2 0 0 0-1 1.738V19a2 2 0 0 0 2 2h11a2 2 0 0 0 1.732-1\"></path></svg>","ScanLine":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-scan-line ico\" aria-hidden=\"true\"><path d=\"M3 7V5a2 2 0 0 1 2-2h2\"></path><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"></path><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"></path><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"></path><path d=\"M7 12h10\"></path></svg>","Clock3":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-clock-3 ico\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 6v6h4\"></path></svg>","Landmark":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-landmark ico\" aria-hidden=\"true\"><path d=\"M10 18v-7\"></path><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"></path><path d=\"M14 18v-7\"></path><path d=\"M18 18v-7\"></path><path d=\"M3 22h18\"></path><path d=\"M6 18v-7\"></path></svg>","Search":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-search ico\" aria-hidden=\"true\"><path d=\"m21 21-4.34-4.34\"></path><circle cx=\"11\" cy=\"11\" r=\"8\"></circle></svg>","ChevronRight":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-chevron-right ico\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"></path></svg>","ChevronLeft":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-chevron-left ico\" aria-hidden=\"true\"><path d=\"m15 18-6-6 6-6\"></path></svg>","ArrowUpRight":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-arrow-up-right ico\" aria-hidden=\"true\"><path d=\"M7 7h10v10\"></path><path d=\"M7 17 17 7\"></path></svg>","ArrowRight":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-arrow-right ico\" aria-hidden=\"true\"><path d=\"M5 12h14\"></path><path d=\"m12 5 7 7-7 7\"></path></svg>","CalendarCheck2":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-calendar-check-2 ico\" aria-hidden=\"true\"><path d=\"M 19 3 L 5 3\"></path><path d=\"M 21 13 L 21 5\"></path><path d=\"M 21 5 A2 2 0 0 0 19 3\"></path><path d=\"M 3 19 A2 2 0 0 0 5 21\"></path><path d=\"M 3 5 L 3 19\"></path><path d=\"M 5 3 A2 2 0 0 0 3 5\"></path><path d=\"m16 19 2 2 4-4\"></path><path d=\"M16 2v3\"></path><path d=\"M3 9h18\"></path><path d=\"M5 21 L12.5 21\"></path><path d=\"M8 2v3\"></path></svg>","X":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-x ico\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"></path><path d=\"m6 6 12 12\"></path></svg>","CornerDownLeft":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-corner-down-left ico\" aria-hidden=\"true\"><path d=\"M20 4v7a4 4 0 0 1-4 4H4\"></path><path d=\"m9 10-5 5 5 5\"></path></svg>","Building2":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-building-complex lucide-building-2 ico\" aria-hidden=\"true\"><path d=\"M10 12h4\"></path><path d=\"M10 8h4\"></path><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"></path><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"></path><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"></path></svg>","ListFilter":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-list-filter ico\" aria-hidden=\"true\"><path d=\"M2 5h20\"></path><path d=\"M6 12h12\"></path><path d=\"M9 19h6\"></path></svg>","CircleCheck":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-circle-check lucide-check-circle-2 ico\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"m16 9-5.5 5.5L8 12\"></path></svg>","Factory":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-factory ico\" aria-hidden=\"true\"><path d=\"M12 16h.01\"></path><path d=\"M16 16h.01\"></path><path d=\"M3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a.5.5 0 0 0-.769-.422l-4.462 2.844A.5.5 0 0 1 15 10.5v-2a.5.5 0 0 0-.769-.422L9.77 10.922A.5.5 0 0 1 9 10.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z\"></path><path d=\"M8 16h.01\"></path></svg>","FolderOpen":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-folder-open ico\" aria-hidden=\"true\"><path d=\"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2\"></path></svg>"};
+const states=['En análisis','En riesgo','En legales','En comisión','Resuelta'];
+const rows=[
+ ['Linar del Sur','py','MiPyME',0,'AL',1,'Revisión de carpeta',21,14,1],
+ ['Marea Industrial','ge','Gran empresa',1,'VS',2,'Vencimiento de calificación',48,36,2],
+ ['Trama del Oeste','py','MiPyME',2,'AL',4,'Revisión de dictamen',13,8,1],
+ ['Cauce Logística','ge','Gran empresa',3,'JL',5,'Comisión de crédito',56,34,1],
+ ['Nexo del Valle','py','MiPyME',0,'VS',7,'Revisión de carpeta',18,12,1],
+ ['Bruma Envases','py','MiPyME',1,'AL',8,'Vencimiento de calificación',25,10,1],
+ ['Prisma Talleres','py','MiPyME',4,'JL',null,'',12,7,1],
+ ['Vértice Textil','ge','Gran empresa',0,'AL',9,'Revisión de carpeta',62,28,2],
+ ['Tilo Alimentos','py','MiPyME',3,'VS',5,'Comisión de crédito',23,17,1],
+ ['Surco Equipos','py','MiPyME',2,'JL',12,'Revisión de dictamen',29,14,1],
+ ['Ladera Papel','ge','Gran empresa',4,'VS',null,'',50,40,1],
+ ['Delta Roble','py','MiPyME',0,'AL',10,'Revisión de carpeta',32,18,1],
+].map(([name,area,segment,stage,owner,day,event,limit,used,holders],i)=>({id:'CR-'+(26081+i),name,area,segment,stage,owner,day,event,limit,used,holders,index:i}));
+const today=Date.UTC(2026,10,26),dayMs=86400000;
+const date=(days,opts)=>new Intl.DateTimeFormat('es-AR',{timeZone:'UTC',...opts}).format(new Date(today+days*dayMs));
+const fullDate=days=>date(days,{day:'numeric',month:'short'});
+const owners={AL:'Ana Luna',VS:'Vera Sol',JL:'Julián Lago'};
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const primary=document.querySelector('#main'),modal=document.querySelector('#modal'),body=document.querySelector('#modalBody');
+const sections=['Bandeja','Agenda','Consultas IA'];
+const size=6;
+let view=0,scope='Todas',stage='',segment='',search='',page=0,active=null,detailTab=0;
+const aiHistory=new Map();
+function initials(name){return name.trim().split(/\s+/).filter(w=>w.length>2).slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+function status(r){return '<span class="status s'+r.stage+'">'+states[r.stage]+'</span>'}
+function btn(text,act,css='btn'){return '<button class="'+css+'" data-act="'+act+'">'+text+'</button>'}
+function selOptions(values){return values.map((v,i)=>'<option value="'+i+'">'+v+'</option>').join('')}
+function notify(message){const el=document.querySelector('#feedback');el.className='toast';el.textContent=message;clearTimeout(notify.timer);notify.timer=setTimeout(()=>{el.textContent='';el.className=''},2500)}
+function nav(){document.querySelector('.nav').innerHTML=sections.map((s,i)=>'<button class="'+(view===i?'active':'')+'" '+(view===i?'aria-current="page"':'')+' data-view="'+i+'">'+icons[['Inbox','CalendarDays','Sparkles'][i]]+s+'</button>').join('')}
+function heading(title,subtitle,action=''){return '<div class="hero"><div><div class="eyebrow">'+icons.CalendarDays+'Jueves, 26 de noviembre de 2026</div><h1>'+title+'</h1><p class="sub">'+subtitle+'</p></div>'+action+'</div>'}
+function metric(label,num,desc,icon,filter,first=false){return '<button class="metric '+(first?'featured':'')+'" data-metric="'+filter+'"><span class="metrichead">'+label+icons[icon]+'</span><strong>'+num+'</strong><small>'+desc+'</small></button>'}
+function stats(){const visible=areaRows();return '<div class="stats">'+metric('En curso',visible.filter(r=>r.stage!==4).length,'Carpetas abiertas','Folders','open',true)+metric('En análisis',visible.filter(r=>r.stage===0).length,'En el área de Crédito','ScanLine','0')+metric('Próximos hitos',visible.filter(r=>r.day!==null&&r.day<=7).length,'Dentro de los próximos 7 días','Clock3','week')+metric('En comisión',visible.filter(r=>r.stage===3).length,'Para tratamiento','Landmark','3')+'</div>'}
+function eventRows(max){const events=areaRows().filter(r=>r.day!==null).sort((a,b)=>a.day-b.day).slice(0,max);return events.map(r=>'<button class="dateitem" data-id="'+r.id+'"><span class="datebox"><small>'+date(r.day,{month:'short'}).replace('.','')+'</small><b>'+date(r.day,{day:'numeric'})+'</b></span><span><span class="eventname">'+esc(r.name)+'</span><span class="small">'+r.event+'</span></span>'+icons.ChevronRight.replace('class="','class="right-arrow ')+'</button>').join('')}
+function aiCard(){return '<section class="ai-card"><span class="leadicon">'+icons.Sparkles+'</span><h2>Asistente de crédito</h2><p>Consultá etapas, vencimientos y exposición con respuestas de ejemplo.</p>'+btn('Probar una consulta '+icons.ArrowRight,'ai','textbtn')+'</section>'}
+function render(){nav();
+ const shortcut=area==='py'?'<button class="textbtn demo-shortcut" data-id="CR-26087">Ver caso resuelto · Prisma Talleres '+icons.ArrowUpRight+'</button>':'';
+ if(view===0){primary.innerHTML=heading('Mesa de crédito','Seguimiento de carpetas y próximos hitos del equipo.',btn(icons.Plus+' Nueva carpeta','create','primary'))+areaControls()+stats()+shortcut+'<div class="layout"><section class="box"><div class="boxhead"><h2>Bandeja de carpetas <span class="count" id="count"></span></h2></div><div class="tools"><label class="search">'+icons.Search+'<input id="search" type="search" aria-label="Buscar por empresa o carpeta" placeholder="Buscar empresa o carpeta"></label><select aria-label="Filtrar por segmento" id="seg"><option value="">Segmentos</option><option>MiPyME</option><option>Gran empresa</option></select><select aria-label="Filtrar por etapa" id="stage"><option value="">Etapas</option>'+selOptions(states)+'</select></div><div id="scopes" class="tabs" aria-label="Vistas de bandeja"></div><div id="results"></div></section><aside class="side"><section class="box agenda"><div class="boxhead"><h2>Agenda próxima</h2>'+btn('Ver todo '+icons.ArrowUpRight,'agenda','textbtn')+'</div><div class="pad">'+eventRows(3)+'</div></section>'+aiCard()+'</aside></div>';
+ document.querySelector('#search').value=search;document.querySelector('#stage').value=stage;document.querySelector('#seg').value=segment;results()}
+ if(view===1){primary.innerHTML=heading('Agenda','Próximos hitos del equipo, ordenados por fecha.')+areaControls()+'<section class="box flatlist"><div class="boxhead"><h2>Hitos programados</h2></div>'+eventRows(rows.length)+'</section>'}
+ if(view===2){primary.innerHTML=heading('Consultas IA','Probá consultas sobre la cartera de demostración.')+areaControls()+'<section class="box flatlist pad">'+assistant(null)+'</section>'}
+}
+function match(r){
+ return (!search||norm(r.name+' '+r.id).includes(norm(search)))&&(!segment||segment===r.segment)&&(stage===''||Number(stage)===r.stage)&&(scope==='Todas'||(scope==='Mis carpetas'&&r.owner==='AL')||(scope==='En curso'&&r.stage!==4)||(scope==='Esta semana'&&r.day!==null&&r.day<=7))}
+function results(){const found=areaRows().filter(match),maxPage=Math.max(0,Math.ceil(found.length/size)-1);page=Math.min(page,maxPage);document.querySelector('#count').textContent=found.length;
+ document.querySelector('#scopes').innerHTML=['Todas','Mis carpetas',...(['En curso','Esta semana'].includes(scope)?[scope]:[])].map(s=>'<button class="'+(s===scope?'active':'')+'" aria-pressed="'+(s===scope)+'" data-scope="'+s+'">'+s+'</button>').join('');
+ document.querySelector('#results').innerHTML='<div class="tablewrap"><table><thead><tr><th>Empresa / carpeta</th><th class="hide-mid">Segmento</th><th>Etapa</th><th class="hide-small">Próximo hito</th><th aria-label="Detalle"></th></tr></thead><tbody>'+found.slice(page*size,page*size+size).map(r=>'<tr data-id="'+r.id+'"><td><button class="client" data-id="'+r.id+'"><span aria-hidden="true" class="initial i'+r.index%4+'">'+esc(initials(r.name))+'</span><span>'+esc(r.name)+'<small>'+r.id+'</small></span></button></td><td class="hide-mid">'+r.segment+'</td><td>'+status(r)+'</td><td class="hide-small due '+(r.day===1?'urgent':'')+'">'+(r.day===null?'—':fullDate(r.day))+'</td><td>'+icons.ChevronRight+'</td></tr>').join('')+'</tbody></table></div>'+(found.length?'':'<div class="empty">No hay carpetas que coincidan. '+btn('Limpiar filtros','reset','textbtn')+'</div>')+'<div class="tableend"><span>'+(found.length?(page*size+1)+'–'+Math.min(found.length,(page+1)*size)+' de '+found.length:'0')+' carpetas</span><div class="pager"><button data-act="prev" aria-label="Página anterior" '+(!page?'disabled':'')+'>'+icons.ChevronLeft+'</button><button data-act="next" aria-label="Página siguiente" '+(page>=maxPage?'disabled':'')+'>'+icons.ChevronRight+'</button></div></div>'}
+function show(content){body.innerHTML=content;modal.setAttribute('aria-labelledby','dialogTitle');if(!modal.open)modal.showModal()}
+function closeBtn(){return '<button data-act="close" class="icon-btn" aria-label="Cerrar">'+icons.X+'</button>'}
+function grid(pairs){return '<div class="detail-grid">'+pairs.map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+'</strong></div>').join('')+'</div>'}
+const areas = {
+  ge: {label:'Grandes Empresas', source:'Base Grandes Empresas'},
+  py: {label:'MiPyMEs', source:'Estado de carpetas de MiPyMES'}
+};
+let area = '';
+const areaRows = () => rows.filter(r => !area || r.area === area);
+function areaControls(){
+  const choices = [['','Ambas áreas'], ...Object.entries(areas).map(([key,a])=>[key,a.label])];
+  return '<div class="workspaces" aria-label="Área de trabajo"><span>Área de trabajo</span>'+choices.map(([key,label])=>
+    '<button data-area="'+key+'" aria-pressed="'+(area===key)+'">'+label+'</button>').join('')+'</div>';
+}
+const exampleProposals = {
+  'CR-26082': {zonal:60,credit:48,zMonths:12,cMonths:9,zGuarantee:'A sola firma',cGuarantee:'Con aval',reason:'Crédito plantea mantener el límite vigente y sumar un aval antes de ampliar la línea.'},
+  'CR-26084': {zonal:64,credit:56,zMonths:12,cMonths:12,zGuarantee:'A sola firma',cGuarantee:'Con garantía prendaria',reason:'Crédito propone un menor importe con garantía sobre equipos.'},
+  'CR-26088': {zonal:70,credit:null,zMonths:12,cMonths:null,zGuarantee:'Con aval',cGuarantee:null,reason:'La propuesta de Crédito está pendiente de análisis.'},
+  'CR-26091': {zonal:50,credit:50,zMonths:12,cMonths:12,zGuarantee:'Con aval',cGuarantee:'Con aval',reason:'Ambas propuestas coinciden en importe, plazo y garantía.'}
+};
+const number = value => value.toLocaleString('es-AR',{maximumFractionDigits:1});
+const amount = value => value==null?'Pendiente':'ARS '+number(value)+' M';
+function metaList(values){
+  return '<dl class="meta-list">'+values.map(([key,value])=>'<div><dt>'+key+'</dt><dd>'+value+'</dd></div>').join('')+'</dl>';
+}
+function sourceLink(tab,title,description,icon){
+  return '<button class="source-link" data-tab="'+tab+'"><span class="source-ico">'+icons[icon]+'</span><span><strong>'+title+'</strong><span class="small">'+description+'</span></span>'+icons.ChevronRight+'</button>';
+}
+function routeCard(r){
+  return '<section class="case-card"><div class="eyebrow">Seguimiento del área</div><h3>'+areas[r.area].label+'</h3>'+
+    metaList([['Planilla de origen',r.added?'Alta de prueba':areas[r.area].source],['Analista asignado',owners[r.owner]],['Próximo hito',r.event||'Sin programar'],['Fecha prevista',r.day===null?'—':fullDate(r.day)]])+'</section>';
+}
+function comparison(r){
+  const p=exampleProposals[r.id];
+  if(!p)return '<section class="case-card"><h3>Propuestas de riesgo</h3><p class="sub">Pendientes de carga en esta carpeta.</p></section>';
+  const delta=p.credit===null?null:p.credit-p.zonal;
+  const direction=delta<0?'menos':'más';
+  const variation=delta===null?'Pendiente de propuesta de Crédito.':delta===0?'Ambas áreas proponen el mismo importe.':
+    'Crédito propone <strong>'+amount(Math.abs(delta))+' '+direction+'</strong> que la Zonal ('+number(Math.abs(delta/p.zonal*100))+' % '+direction+').';
+  const card=(label,value,cls)=>'<div class="proposal '+cls+'"><span>'+label+'</span><b>'+amount(value)+'</b><small>Riesgo total propuesto</small></div>';
+  return '<section class="case-card"><div class="eyebrow">Evaluación de riesgo</div><h3>Comparación de propuestas</h3><p class="small">Importes en millones de pesos argentinos.</p><div class="proposal-pair">'+card('Gerencia Zonal',p.zonal,'')+card('Crédito',p.credit,'credit')+'</div><p class="delta">'+variation+'</p><table class="compare"><thead><tr><th>Condición</th><th>Zonal</th><th>Crédito</th></tr></thead><tbody><tr><td>Plazo</td><td>'+p.zMonths+' meses</td><td>'+(p.cMonths===null?'Pendiente':p.cMonths+' meses')+'</td></tr><tr><td>Garantía</td><td>'+p.zGuarantee+'</td><td>'+(p.cGuarantee||'Pendiente')+'</td></tr></tbody></table><p class="sub">'+p.reason+'</p></section>';
+}
+const closedExample='CR-26087';
+rows.find(r=>r.id===closedExample).opinion={choice:'Acompañar con condiciones',note:'Se propone renovar la línea vigente. Se incorporó la constancia de levantamiento del cheque y queda previsto revisar la evolución de la segunda entidad en el próximo control.',author:owners.JL,time:'23/11/26, 10:30'};
+function pyWorkflow(r){
+  const finished=r.stage===4, started=!r.added;
+  const opened=finished?-24:started?-11:0;
+  const enteredRisk=started&&r.stage>=1, leftRisk=started&&r.stage>=2;
+  const legalDone=started&&r.stage>=3;
+  const booked=legalDone, resolution=finished?-2:null;
+  const riskDate=finished?-20:-8;
+  const statusExcel=['EN ANALISIS','RIESGO','DICTAMEN LEGALES','COMISION HD','TERMINADO'][r.stage];
+  const days=0-opened;
+  const duration=finished?resolution-opened:null;
+  const stamp=(n)=>n===null?'Pendiente':fullDate(n);
+  const milestones=[
+    ['Ingreso al área','INGRESO',opened,'Recepción de la carpeta y asignación al equipo.'],
+    ['Intervención de Riesgo','RIESGO · CAL RIESGO',enteredRisk?riskDate:null,enteredRisk?'Calificación de Riesgo: '+stamp(leftRisk?(finished?-16:-6):null)+'.':'Pendiente de envío.'],
+    ['Intervención de Legales','ENVIO L · DICTAMEN',leftRisk?(finished?-14:-4):null,leftRisk?'Dictamen legal: '+stamp(legalDone?(finished?-9:-2):null)+'.':'Pendiente de pase.'],
+    ['Elevación y comisión','ELEVACION · COMISION',booked?(finished?-3:r.day):null,booked?'Elevación a HD. '+(finished?'Comisión realizada.':'Comisión programada.'):'Sin elevación registrada.'],
+    ['Resolución','RESOLUCION · TERMINADO',resolution,finished?'Renovación autorizada por HD con revisión en el próximo control. Carpeta cerrada.':'Sin resolución registrada.']
+  ];
+  const lines=milestones.map(([title,cols,day,note])=>{
+    const cls=day===null?'waiting':day>0?'scheduled':'complete';
+    return '<li class="'+cls+'"><time>'+stamp(day)+'</time><i aria-hidden="true"></i><div><b>'+title+'</b><small>'+cols+'</small><p>'+note+'</p></div></li>';
+  }).join('');
+  const fields=[['Cliente',esc(r.name)],['CUIT','Identificador reservado · demo'],['Zonal','Centro'],['Equipo','Crédito MiPyMEs'],['Segmento',r.segment],['Instancia',booked?'HD':'En análisis'],['Terminado',statusExcel],['Días · al corte del 26 nov',days],['Demora · valor de muestra',enteredRisk?(finished?18:8)+' días':'Sin informar'],['Observaciones',finished?'Se recibió documentación complementaria antes de la comisión.':'Seguimiento a cargo del equipo asignado.']];
+  return '<section class="case-card"><div class="eyebrow">Circuito MiPyMEs</div><h3>Del ingreso a la resolución</h3><p class="small">'+(finished?duration+' días entre el ingreso y la resolución':'Seguimiento al 26 nov 2026')+'</p><ol class="py-track">'+lines+'</ol></section>'+
+    '<details class="case-card sheet-fields"><summary>Datos de la planilla MiPyMEs</summary>'+metaList(fields)+'</details>';
+}
+function overview(r){
+  return '<div class="case-layout"><div class="stack">'+(r.area==='ge'?comparison(r):pyWorkflow(r))+routeCard(r)+'</div><aside class="stack"><section class="case-card"><h3>Fuentes de análisis</h3>'+
+    sourceLink(1,'Power BI',r.limit===null?'Sin indicadores':number(r.used/r.limit*100)+' % del límite utilizado','ScanLine')+
+    sourceLink(2,'BCRA',r.holders+' titular'+(r.holders===1?'':'es')+' · '+(r.limit===null?'consulta pendiente':r.holders>1?'1 pendiente':'consultado'),'Landmark')+'</section>'+
+    '<section class="case-card"><div class="eyebrow">Criterio del analista</div><h3>Dictamen</h3><p class="small">'+(r.opinion?'Registrado · '+esc(r.opinion.choice):'Pendiente de registrar')+'</p><button class="primary" data-tab="4">'+(r.opinion?'Ver dictamen':'Redactar dictamen')+' '+icons.ArrowRight+'</button></section></aside></div>';
+}
+function powerView(r){
+  if(r.limit===null)return '<section class="case-card"><h3>Exposición interna</h3><p class="sub">Todavía no hay indicadores asociados a esta carpeta.</p></section>';
+  return '<section class="case-card"><div class="eyebrow">Power BI · Modelo simulado</div><h3>Exposición interna de la carpeta</h3><p class="small">Corte al 31 oct 2026 · Importes en millones de ARS</p>'+
+    grid([['Límite vigente',amount(r.limit)],['Saldo utilizado',amount(r.used)],['Disponible',amount(r.limit-r.used)],['Utilización',number(r.used/r.limit*100)+' %']])+
+    (exampleProposals[r.id]?.credit!=null?'<p class="delta">Con el límite propuesto por Crédito, el margen sobre el saldo utilizado sería de <strong>'+amount(exampleProposals[r.id].credit-r.used)+'</strong>.</p>':'')+'</section>';
+}
+// Synthetic provider examples. Amounts in the debt methods are thousands of ARS.
+const bcraGuide='https://www.bcra.gob.ar/archivos/Catalogo/Content/files/pdf/central-deudores-v1.pdf';
+const amountsByMonth=[4200,4460,4310,4650,4790,5050,5320,5160,5480,5600,5840,5730,5500,5660,5820,5990,6110,6040,5780,5610,5480,5270,5060,5250];
+function periodAt(index){
+  const dt=new Date(Date.UTC(2024,10+index,1));
+  return String(dt.getUTCFullYear())+String(dt.getUTCMonth()+1).padStart(2,'0');
+}
+function periodLabel(key){
+  return new Intl.DateTimeFormat('es-AR',{month:'short',year:'2-digit',timeZone:'UTC'}).format(new Date(Date.UTC(+key.slice(0,4),+key.slice(4)-1,1))).replace(' de ',' ');
+}
+function sampleBcra(r,holder=0){
+  if(r.limit===null||holder>0)return null;
+  const detailed=r.id===closedExample;
+  const scale=(r.index+1)*750/5250;
+  const periodos=amountsByMonth.map((base,i)=>{
+    const total=Math.round(base*scale),first=Math.round(total*0.64);
+    return {periodo:periodAt(i),entidades:[
+      {entidad:'Banco del Estuario',monto:first,situacion:1},
+      {entidad:'Financiera del Centro',monto:total-first,situacion:detailed&&i>=20?2:1}
+    ]};
+  });
+  const last=periodos[periodos.length-1];
+  const current=last.entidades.map((e,i)=>({...e,diasAtraso:detailed&&i===1?38:0,enRevision:detailed&&i===1,procesoJud:false}));
+  const checks=detailed?[{causal:'Defectos formales',nroCheque:80031,monto:185000,fechaRechazo:'05 nov 2026',fechaPago:'11 nov 2026',fechaPagoMulta:'12 nov 2026',estadoMulta:null}]:[];
+  return {periodos,periodo:last.periodo,entidades:current,checks,consulta:detailed?'20 nov 2026':'26 nov 2026'};
+}
+function totalDebt(rows){return rows.reduce((sum,e)=>sum+e.monto,0)}
+function historyGraph(periodos,range){
+  const slice=periodos.slice(-range);
+  const values=slice.map(p=>p.entidades.length?totalDebt(p.entidades):null);
+  const ceiling=Math.max(500,Math.ceil(Math.max(...values)/500)*500);
+  const label=i=>values[i]===null?'sin información':number(values[i])+' miles de ARS';
+  const bars=slice.map((p,i)=>'<div class="hist-col"><i style="height:'+(values[i]===null?0:100*values[i]/ceiling)+'%" title="'+periodLabel(p.periodo)+' · '+label(i)+'"></i></div>').join('');
+  const lines=slice.map((p,i)=>'<tr><td>'+periodLabel(p.periodo)+'</td><td>'+(values[i]===null?'Sin información':number(values[i]))+'</td><td>'+(p.entidades.length?Math.max(...p.entidades.map(e=>e.situacion)):'—')+'</td></tr>').join('');
+  return '<section class="case-card trend"><div class="chart-title"><div><h3>Evolución de la deuda</h3><small>Miles de ARS · suma por período</small></div><label><span class="sr-only">Período del gráfico</span><select id="historyRange">'+[6,12,24].map(n=>'<option value="'+n+'" '+(n===range?'selected':'')+'>'+n+' meses</option>').join('')+'</select></label></div><div class="bars" role="img" aria-label="Deuda desde '+periodLabel(slice[0].periodo)+' hasta '+periodLabel(slice.at(-1).periodo)+', de '+label(0)+' a '+label(slice.length-1)+'."><div class="yscale"><span>'+number(ceiling)+'</span><span>'+number(ceiling/2)+'</span><span>0</span></div><div class="hist-plot">'+bars+'</div></div><div class="xscale"><span>'+periodLabel(slice[0].periodo)+'</span><span>'+periodLabel(slice.at(-1).periodo)+'</span></div><details class="chart-data"><summary>Ver valores por mes</summary><table class="compare"><thead><tr><th>Período</th><th>Miles de ARS</th><th>Mayor situación</th></tr></thead><tbody>'+lines+'</tbody></table></details></section>';
+}
+function entityChart(data){
+  const total=totalDebt(data.entidades);
+  const lines=data.entidades.map(e=>'<div class="lender"><div><b>'+esc(e.entidad)+'</b><strong>'+number(e.monto)+'</strong></div><div class="track"><i style="width:'+(total?100*e.monto/total:0)+'%"></i></div><small>'+number((total?100*e.monto/total:0))+' % del total · Situación '+e.situacion+'</small></div>').join('');
+  return '<section class="case-card"><h3>Deuda por entidad</h3><small>Miles de ARS · '+periodLabel(data.periodo)+'</small>'+lines+'</section>';
+}
+const liveOrigin='http://127.0.0.1:4188';
+const liveByCase=new Map();
+const liveLink=r=>liveOrigin+'/mesa-de-credito.html#'+r.id+'/real';
+function liveState(r){
+  if(!liveByCase.has(r.id))liveByCase.set(r.id,{mode:false,loading:false,input:'',range:12});
+  return liveByCase.get(r.id);
+}
+function liveAccess(r){
+  const url=liveLink(r);
+  return '<div class="live-access"><span><b>Consultar otro titular en el BCRA</b><small>Consulta oficial independiente de los datos de demostración.</small></span>'+
+    (location.origin===liveOrigin?'<button class="primary" data-act="live-mode">Consultar por CUIT</button>':'<a class="primary" href="'+url+'">Abrir consulta real ↗</a>')+'</div>';
+}
+function outcome(section,empty){
+  return '<p class="callout">'+esc(section.state==='empty'?empty:section.message)+'</p>';
+}
+function liveReport(state){
+  const report=state.report;
+  if(!report)return '';
+  const {actual,historial,cheques}=report;
+  const name=[actual,historial,cheques].find(s=>s.name)?.name||'Consulta por identificación fiscal';
+  const ts=new Intl.DateTimeFormat('es-AR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Argentina/Buenos_Aires'}).format(new Date(report.consulted));
+  let content='<div><h3>'+esc(name)+'</h3><p class="small">CUIT '+esc(report.cuit)+' · Consulta '+ts+' (Argentina) · Fuente: BCRA</p></div>';
+  if(actual.state==='ok'){
+    const last=actual.data.at(-1),rows=last.entidades;
+    if(rows.length){
+      const lines=rows.map(e=>'<tr><td>'+esc(e.entidad)+'</td><td>'+number(e.monto)+'</td><td>'+e.situacion+'</td><td>'+esc(e.diasAtraso===null?'Sin dato':e.diasAtraso===0?'No aplicable':e.diasAtraso+' días')+'</td><td>'+([e.enRevision?'En revisión':'',e.procesoJud?'Proceso judicial':''].filter(Boolean).join(' · ')||'—')+'</td></tr>').join('');
+      content+='<section class="case-card"><h3>Deuda informada · '+periodLabel(last.periodo)+'</h3><p class="sub"><strong>'+number(totalDebt(rows))+' miles de ARS</strong> entre '+rows.length+' entidades.</p><details class="chart-data"><summary>Ver situación por entidad</summary><div class="tablewrap"><table class="compare"><thead><tr><th>Entidad</th><th>Miles de ARS</th><th>Situación</th><th>Atraso</th><th>Marcas</th></tr></thead><tbody>'+lines+'</tbody></table></div></details></section>';
+    }else content+='<p class="callout">Sin entidades informantes en el último período.</p>';
+  }else content+='<section class="case-card"><h3>Deuda actual</h3>'+outcome(actual,'Sin registros de deuda para este CUIT en la consulta actual.')+'</section>';
+  const hist=historial.state==='ok'?realHistory(historial.data,state.range):'<section class="case-card"><h3>Historial de deuda</h3>'+outcome(historial,'Sin períodos históricos informados.')+'</section>';
+  const recent=actual.state==='ok'?actual.data.at(-1):null;
+  const dist=recent?.entidades.length?entityChart(recent):'';
+  content+='<div class="'+(dist?'report-charts':'stack')+'"><div id="historyChart">'+hist+'</div>'+dist+'</div>';
+  let details=cheques.state==='ok'?'<p class="sub">'+cheques.data.length+' registros informados · Importes en pesos</p>':outcome(cheques,'El BCRA no encontró registros de cheques rechazados para este CUIT.');
+  if(cheques.state==='ok'){
+    details+=cheques.data.map(c=>'<details class="chart-data"><summary>'+esc(c.fechaRechazo??'Sin fecha')+' · '+esc(c.causal)+' · ARS '+number(c.monto)+'</summary>'+metaList([
+      ['Entidad (código)',esc(c.entidad)],['N.º cheque',esc(c.nroCheque)],['Levantamiento',esc(c.fechaPago||'Sin fecha informada')],['Multa',esc(c.fechaPagoMulta?'Pago el '+c.fechaPagoMulta:c.estadoMulta||'Sin dato')],['En revisión',c.enRevision?'Sí':'No'],['Proceso judicial',c.procesoJud?'Sí':'No']
+    ])+'</details>').join('');
+  }
+  return content+'<section class="case-card" id="liveCheques"><h3>Cheques rechazados</h3>'+details+'</section>';
+}
+function realHistory(periods,range){
+  const last=periods.at(-1).periodo;
+  const monthIndex=Number(last.slice(0,4))*12+Number(last.slice(4))-1;
+  const mapped=new Map(periods.filter(p=>p.entidades.length).map(p=>[p.periodo,p]));
+  const calendar=Array.from({length:range},(_,i)=>{
+    const m=monthIndex-range+i+1;
+    const key=String(Math.floor(m/12))+String(m%12+1).padStart(2,'0');
+    return mapped.get(key)||{periodo:key,entidades:[]};
+  });
+  return historyGraph(calendar,range);
+}
+function livePanel(r){
+  const state=liveState(r);
+  return '<div class="stack"><section class="case-card"><div class="eyebrow">API oficial · Consulta real</div><h3>Buscar titular por CUIT</h3><p class="small">El resultado corresponde al CUIT consultado. El expediente de '+esc(r.name)+' es ficticio.</p><form id="liveBcraForm" class="live-form"><label>CUIT<input class="field" name="cuit" inputmode="numeric" placeholder="11 dígitos" maxlength="16" required value="'+esc(state.input)+'"></label><button class="primary" '+(state.loading?'disabled':'')+'>Consultar</button><button class="btn" type="button" data-act="live-example" '+(state.loading?'disabled':'')+'>Usar empresa del Excel</button></form><div aria-live="polite">'+(state.loading?'<p class="sub">Consultando deuda, historial y cheques en el BCRA…</p>':state.error?'<p class="callout">'+esc(state.error)+'</p>':'')+'</div></section>'+liveReport(state)+'<div>'+btn('Volver a datos de muestra','live-exit','textbtn')+'</div></div>';
+}
+async function requestLive(r,example){
+  const state=liveState(r);
+  if(state.loading)return;
+  const input=body.querySelector('[name="cuit"]');
+  state.input=input?.value||'';
+  state.report=null;state.error='';state.loading=true;
+  detail(r,2);
+  try{
+    const response=await fetch('/api/bcra',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(example?{example:true}:{cuit:state.input}),signal:AbortSignal.timeout(23000),cache:'no-store'});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.message||'La consulta no se pudo completar.');
+    state.input=data.cuit;state.report=data;state.range=12;
+  }catch(e){state.error=e.name==='TimeoutError'?'Se agotó el tiempo de consulta. Podés volver a intentar.':e instanceof TypeError?'El servicio local no está disponible.':e.message;}
+  finally{state.loading=false;if(modal.open&&active===r&&detailTab===2&&state.mode)detail(r,2)}
+}
+
+function bcraView(r){
+  if(liveState(r).mode&&location.origin===liveOrigin)return livePanel(r);
+  return liveAccess(r)+sampleBcraView(r);
+}
+function sampleBcraView(r){
+  const idx=r.bcraHolder||0;
+  const data=sampleBcra(r,idx);
+  const selector=r.holders>1?'<label class="holder-select">Titular <select id="bcraHolder">'+Array.from({length:r.holders},(_,i)=>'<option value="'+i+'" '+(idx===i?'selected':'')+'>'+(i===0?esc(r.name):'Cotitular '+(i+1)+' · pendiente')+'</option>').join('')+'</select></label>':'';
+  const head='<div class="chart-title"><div><div class="eyebrow">BCRA · Consulta simulada</div><h3>'+ (idx===0?esc(r.name):'Cotitular '+(idx+1))+'</h3><p class="small">'+(data?'Consulta del '+data.consulta+' · Último período de deuda: '+periodLabel(data.periodo):'Antecedentes por titular')+'</p></div>'+selector+'</div>';
+  if(!data)return head+'<p class="callout">Consulta pendiente. Aún falta conocer la deuda y los cheques de este titular.</p>';
+  const worst=Math.max(...data.entidades.map(e=>e.situacion));
+  const kpis=[['Deuda informada',number(totalDebt(data.entidades)),'miles de ARS'],['Mayor situación',worst,'entre '+data.entidades.length+' entidades'],['Cheques rechazados',data.checks.length,data.checks.length?'con levantamiento informado':'sin registros informados']];
+  const metrics='<div class="bcra-stats">'+kpis.map(([k,v,n])=>'<div><small>'+k+'</small><strong>'+v+'</strong><small>'+n+'</small></div>').join('')+'</div>';
+  const entities=data.entidades.map(e=>'<tr><td>'+e.entidad+'</td><td>'+e.situacion+'</td><td>'+(e.diasAtraso===0?'No aplicable':e.diasAtraso+' días')+'</td><td>'+(e.enRevision?'En revisión':e.procesoJud?'Proceso judicial':'Sin marcas')+'</td></tr>').join('');
+  const checks=data.checks.length?data.checks.map(c=>metaList([['Cheque',c.nroCheque],['Causal',c.causal],['Monto en pesos (ARS)',number(c.monto)],['Fecha de rechazo',c.fechaRechazo],['Levantamiento informado',c.fechaPago||'Sin fecha informada'],['Multa',c.fechaPagoMulta?'Pago informado el '+c.fechaPagoMulta:c.estadoMulta||'Sin informar']])).join(''):'<p class="small">Sin registros informados en la consulta simulada.</p>';
+  return '<div class="stack">'+head+metrics+'<div class="report-charts"><div id="historyChart">'+historyGraph(data.periodos,r.bcraRange||12)+'</div>'+entityChart(data)+'</div><section class="case-card"><h3>Situación por entidad</h3><table class="compare"><thead><tr><th>Entidad</th><th>Situación</th><th>Atraso</th><th>Observaciones</th></tr></thead><tbody>'+entities+'</tbody></table></section><section class="case-card"><h3>Cheques rechazados</h3>'+checks+'</section><a class="textbtn" href="'+bcraGuide+'" target="_blank" rel="noopener">Manual de la API Central de Deudores v1.0 ↗</a></div>';
+}
+const choices=['Acompañar propuesta','Acompañar con condiciones','Solicitar información','Desaconsejar propuesta'];
+function opinionView(r){
+  const saved=r.opinion,draft=r.draft||saved||{};
+  const p=exampleProposals[r.id];
+  const refs=[['Área responsable',areas[r.area].label]];
+  if(p)refs.push(['Zonal / Crédito',amount(p.zonal)+' / '+amount(p.credit)]);
+  refs.push(['Saldo interno · oct 2026',r.limit===null?'Sin información':amount(r.used)],['BCRA · oct 2026',r.limit===null?'Pendiente':r.holders>1?'1 consulta pendiente':'1 titular consultado']);
+  const register=saved?'<section class="case-card" role="status"><div class="eyebrow">'+icons.CircleCheck+' Dictamen registrado</div><h3>'+esc(saved.choice)+'</h3><p class="signed">'+esc(saved.note)+'</p><span class="small">'+esc(saved.author)+' · '+esc(saved.time)+'</span><button class="btn" data-act="edit-opinion">Editar dictamen</button></section>':'';
+  const form='<form class="case-card opinion-form" id="opinionform"><div><div class="eyebrow">Dictamen del analista</div><h3>'+ (saved?'Editar dictamen':'Dejar dictamen') +'</h3></div><label>Recomendación<select name="choice" required><option value="">Elegí una opción</option>'+choices.map(c=>'<option '+(draft.choice===c?'selected':'')+'>'+c+'</option>').join('')+'</select></label><label>Fundamentos y condiciones<textarea name="note" required maxlength="3000" placeholder="¿Qué evidencia sustenta tu recomendación?">'+esc(draft.note||'')+'</textarea></label><div class="small">Firma de prueba: '+owners.AL+'. El dictamen se conserva hasta recargar la demostración.</div><div class="foot">'+(saved?'<button type="button" class="btn" data-act="cancel-opinion">Cancelar edición</button>':'')+'<button class="primary">Registrar dictamen</button></div></form>';
+  return '<div class="case-layout">'+(!saved||r.editing?form:register)+'<aside class="case-card"><div class="eyebrow">Referencia de la carpeta</div><h3>Datos para el dictamen</h3>'+metaList(refs)+sourceLink(1,'Revisar Power BI','Exposición interna','ScanLine')+sourceLink(2,'Revisar BCRA','Detalle por titular','Landmark')+'</aside></div>';
+}
+const detailSections=['Evaluación','Power BI','BCRA','Consultas IA','Dictamen'];
+function detail(r,tab=0){
+  if(!r)return;
+  active=r;detailTab=tab;
+  modal.classList.add('case-dialog');
+  const tabs=detailSections.map((s,i)=>'<button data-tab="'+i+'" aria-pressed="'+(i===tab)+'" class="'+(i===tab?'active':'')+'">'+s+'</button>').join('');
+  show('<header class="case-head"><div class="dialogbar"><div><div class="eyebrow">'+icons.FolderOpen+' Carpeta '+r.id+' · Datos ficticios</div><div class="case-titlebar"><h2 id="dialogTitle">'+esc(r.name)+'</h2>'+status(r)+'</div></div>'+closeBtn()+'</div><div class="case-meta"><b>Área · '+areas[r.area].label+'</b><span>Segmento · '+r.segment+'</span><span>'+r.holders+' titular'+(r.holders===1?'':'es')+'</span></div><nav class="tabs detailtab" aria-label="Secciones de la carpeta">'+tabs+'</nav></header><div class="detailpane" id="pane"></div>');
+  const pages=[overview,powerView,bcraView,assistant,opinionView];
+  const pane=document.querySelector('#pane');
+  pane.innerHTML=pages[tab](r);
+  if(tab===1||tab===2){
+    const next=tab===1?2:4;
+    pane.insertAdjacentHTML('beforeend','<div class="foot"><button data-tab="0" class="btn">Volver a evaluación</button><button data-tab="'+next+'" class="primary">'+(tab===1?'Consultar BCRA':'Ir al dictamen')+' '+icons.ArrowRight+'</button></div>');
+  }
+  modal.scrollTop=0;
+}
+function newForm(){active=null;modal.classList.remove('case-dialog');show('<div class="dialogbar"><div><span class="tag">Alta de demostración</span><h2 id="dialogTitle">Nueva carpeta</h2></div>'+closeBtn()+'</div><form class="forms stack" id="newform"><label>Empresa ficticia<input class="field" name="name" maxlength="65" required pattern=".*\\S.*" placeholder="Nombre de ejemplo"></label><label>Área responsable<select name="area" aria-label="Área responsable"><option value="py" '+(area!=='ge'?'selected':'')+'>MiPyMEs</option><option value="ge" '+(area==='ge'?'selected':'')+'>Grandes Empresas</option></select></label><label>Segmento<select name="segment" aria-label="Segmento"><option>MiPyME</option><option>Gran empresa</option></select></label><label>Cantidad de titulares<input class="field" name="holders" type="number" min="1" max="5" value="1" required></label><p class="due-note">Usá datos inventados. El alta dura hasta que cierres o recargues el mockup.</p><div class="foot"><button type="button" data-act="close" class="btn">Cancelar</button><button class="primary">Crear carpeta</button></div></form>')}
+function prompts(r){return r?['Resumir esta carpeta','¿Cuál es la exposición?','¿Qué informa el BCRA?']:['¿Qué vence esta semana?','¿Qué carpetas están en riesgo?','¿Cuántas están en comisión?']}
+function assistant(r){const history=aiHistory.get(r?.id||('global-'+area))||[];
+ return '<div class="stack"><div><span class="eyebrow">'+icons.Sparkles+' Asistente · Simulación</span><h3>'+(r?'Preguntá sobre esta carpeta':'Preguntá sobre la bandeja')+'</h3><p class="small">Respuestas de ejemplo con referencias a los datos ficticios.</p></div><div class="chips">'+prompts(r).map((p,i)=>'<button data-q="'+i+'">'+p+'</button>').join('')+'</div></div><div id="conversation" aria-live="polite">'+history.map(exchangeHtml).join('')+'</div><form class="aiform" id="ask"><input class="field" name="q" aria-label="Tu consulta" placeholder="Escribí una consulta…" maxlength="200" required><button class="primary" aria-label="Enviar consulta">'+icons.ArrowRight+'</button></form>'}
+function exchangeHtml([q,a,ref]){return '<div class="answer"><div class="question">'+esc(q)+'</div>'+esc(a)+(ref?'<span class="small">Fuente de muestra · '+esc(ref)+'</span>':'')+'</div>'}
+function reply(r,q){const ask=norm(q);
+ if(r){
+ if(/bcra|cheque|deud/.test(ask)){
+   const data=sampleBcra(r);
+   if(!data)return ['La consulta está pendiente.',r.id+' / BCRA'];
+   return ['Para el primer titular se informan '+number(totalDebt(data.entidades))+' miles de ARS de deuda. La mayor situación es '+Math.max(...data.entidades.map(e=>e.situacion))+'. '+(data.checks.length?'Un cheque rechazado por defectos formales, con levantamiento informado.':'Sin registros informados de cheques rechazados.')+(r.holders>1?' El segundo titular tiene la consulta pendiente.':''),r.id+' / BCRA · '+periodLabel(data.periodo)];
+ }
+ if(/expos|saldo|limite|utiliz/.test(ask))return [r.limit===null?'Todavía no hay indicadores vinculados.':'El saldo utilizado es ARS '+r.used+' millones sobre un límite de ARS '+r.limit+' millones ('+Math.round(r.used/r.limit*100)+' %).',r.id+' / Power BI · octubre 2026'];
+ if(/resum|carpeta|hito|responsable|etapa/.test(ask))return [r.name+' está en la etapa «'+states[r.stage]+'», a cargo de '+owners[r.owner]+'. '+(r.day===null?'Sin próximo hito registrado.':'Próximo hito el '+fullDate(r.day)+': '+r.event+'.'),r.id+' / Seguimiento'];
+ }else{
+ if(/venc|semana|hito|agenda/.test(ask)){const list=areaRows().filter(r=>r.day!==null&&r.day<=7).sort((a,b)=>a.day-b.day);return [list.length+' hitos en los próximos 7 días.\n'+list.map(r=>fullDate(r.day)+' · '+r.name+' — '+r.event).join('\n'),'Agenda / próximos 7 días']}
+ if(/riesgo|comision|analisis|legales/.test(ask)){const st=/comision/.test(ask)?3:/riesgo/.test(ask)?1:/legales/.test(ask)?2:0;const list=areaRows().filter(r=>r.stage===st);return [list.length+' carpetas en la etapa «'+states[st]+'»: '+list.map(r=>r.name).join(', ')+'.','Bandeja / etapa']}
+ }return ['Esta simulación cubre las consultas sugeridas. Elegí una para ver cómo se presentaría la respuesta con su fuente.','']}
+function ask(q){if(!q.trim())return;const r=modal.open?active:null,key=r?.id||('global-'+area),exchange=[q,...reply(r,q)],history=aiHistory.get(key)||[];history.push(exchange);aiHistory.set(key,history);document.querySelector('#conversation').insertAdjacentHTML('beforeend',exchangeHtml(exchange));document.querySelector('#ask input').value='';document.querySelector('#ask input').focus()}
+function reset(){search='';stage='';segment='';scope='Todas';page=0}
+function changeView(i){view=i;active=null;render();window.scrollTo(0,0)}
+document.addEventListener('click',e=>{
+ const el=e.target.closest('button,[data-id]');if(!el)return;const d=el.dataset;
+ if(el.id==='theme'){document.documentElement.classList.toggle('dark');el.innerHTML=document.documentElement.classList.contains('dark')?icons.Sun:icons.Moon;return}
+ if(d.area!==undefined){area=d.area;reset();render();document.querySelector('[data-area="'+area+'"]').focus();return}
+ if(d.view!==undefined){changeView(Number(d.view));return}
+ if(d.id){detail(rows.find(r=>r.id===d.id));return}
+ if(d.tab!==undefined){detail(active,Number(d.tab));body.querySelector('[data-tab="'+d.tab+'"]').focus();return}
+ if(d.q!==undefined){ask(prompts(modal.open?active:null)[Number(d.q)]);return}
+ if(d.scope){scope=d.scope;page=0;results();document.querySelector('[data-scope="'+scope+'"]').focus();return}
+ if(d.metric){reset();if(d.metric==='open')scope='En curso';else if(d.metric==='week')scope='Esta semana';else stage=d.metric;render();document.querySelector('#scopes').scrollIntoView({block:'nearest'});return}
+ switch(d.act){
+ case 'live-mode':liveState(active).mode=true;detail(active,2);body.querySelector('[name="cuit"]').focus();break;
+ case 'live-example':requestLive(active,true);break;
+ case 'live-exit':liveState(active).mode=false;detail(active,2);break;
+ case 'edit-opinion': active.editing=true;detail(active,4);document.querySelector('#opinionform select').focus();break;
+ case 'cancel-opinion': active.draft=null;active.editing=false;detail(active,4);break;
+ case 'create':newForm();break;case 'close':modal.close();break;case 'ai':changeView(2);break;case 'agenda':changeView(1);break;case 'prev':page--;results();break;case 'next':page++;results();break;case 'reset':reset();render();break}
+});
+document.addEventListener('input',e=>{if(e.target.form?.id==='opinionform'){
+   const form=e.target.form;form.elements.note.setCustomValidity('');
+   active.draft={choice:form.elements.choice.value,note:form.elements.note.value};
+ }
+ if(e.target.id==='search'){search=e.target.value.trim();page=0;results()}});
+document.addEventListener('change',e=>{
+ if(e.target.id==='historyRange'){
+   const live=liveState(active);
+   if(live.mode&&live.report?.historial.state==='ok'){
+     live.range=Number(e.target.value);
+     document.querySelector('#historyChart').innerHTML=realHistory(live.report.historial.data,live.range);
+     document.querySelector('#historyRange').focus();return;
+   }
+   active.bcraRange=Number(e.target.value);
+   const data=sampleBcra(active,active.bcraHolder||0);
+   document.querySelector('#historyChart').innerHTML=historyGraph(data.periodos,active.bcraRange);
+   document.querySelector('#historyRange').focus();return;
+ }
+ if(e.target.id==='bcraHolder'){active.bcraHolder=Number(e.target.value);detail(active,2);document.querySelector('#bcraHolder').focus();return}
+ if(e.target.id==='stage'||e.target.id==='seg'){if(e.target.id==='stage')stage=e.target.value;else segment=e.target.value;page=0;results()}});
+document.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);if(e.target.id==='ask'){ask(String(f.get('q')));return}
+ if(e.target.id==='liveBcraForm'){requestLive(active,false);return}
+ if(e.target.id==='opinionform'){
+   const note=String(f.get('note')).trim();
+   if(!note){const field=e.target.elements.note;field.setCustomValidity('Escribí los fundamentos del dictamen.');field.reportValidity();return}
+   active.opinion={choice:String(f.get('choice')),note,author:owners.AL,time:new Intl.DateTimeFormat('es-AR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Argentina/Buenos_Aires'}).format(new Date())};
+   active.draft=null;active.editing=false;detail(active,4);body.querySelector('[data-act="edit-opinion"]').focus();return;
+ }
+ if(e.target.id==='newform'){const name=String(f.get('name')).trim();if(!name)return;const n=rows.length,r={id:'CR-'+(26081+n),name,added:true,area:String(f.get('area')),segment:String(f.get('segment')),holders:Number(f.get('holders')),stage:0,owner:'AL',index:n,day:null,event:'',limit:null,used:null};rows.unshift(r);if(area)area=r.area;modal.close();reset();render();detail(r);notify('Carpeta de prueba creada')}});
+modal.addEventListener('click',e=>{if(e.target===modal){const b=modal.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)modal.close()}});
+document.querySelector('#theme').innerHTML=icons.Moon;render();
+function openLinkedCase(){
+  const [key,section]=location.hash.slice(1).split('/');
+  const record=rows.find(r=>r.id===key);
+  if(record){area=record.area;render();liveState(record).mode=section==='real'&&location.origin===liveOrigin;detail(record,['real','bcra'].includes(section)?2:0);
+    if(liveState(record).mode&&!liveState(record).report)requestLive(record,true)}
+}
+window.addEventListener('hashchange',openLinkedCase);openLinkedCase();
+</script></body></html>
