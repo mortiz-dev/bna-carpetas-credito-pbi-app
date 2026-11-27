@@ -1,4 +1,8 @@
-import type { CreditArea } from '@rayfin-app/shared';
+import type {
+  CreditArea,
+  CreditInstance,
+  CreditOutcome,
+} from '@rayfin-app/shared';
 
 export type Area = CreditArea;
 export const AREA_LABELS = { ge: 'Grandes Empresas', py: 'MiPyMEs' } as const;
@@ -38,15 +42,59 @@ export interface NewCaseInput {
   segment: string;
   holders: number;
   cuit?: string;
+  /** YYYY-MM-DD; the day the case reached the credit area. */
+  entryDate?: string;
+  zonal?: string;
+  branch?: string;
+  responsible?: string;
 }
 export interface Proposal {
   zonal: number;
   credit: number | null;
-  zMonths: number;
+  zMonths: number | null;
   cMonths: number | null;
-  zGuarantee: string;
+  zGuarantee: string | null;
   cGuarantee: string | null;
   reason: string;
+}
+
+/** Dates are YYYY-MM-DD in Argentina; null when the step has not happened. */
+export interface Milestones {
+  riskSentAt: string | null;
+  riskReturnedAt: string | null;
+  legalSentAt: string | null;
+  legalOpinionAt: string | null;
+  committeeAt: string | null;
+  resolvedAt: string | null;
+  ratingDueAt: string | null;
+}
+
+export interface TrackingInput extends Milestones {
+  segment: string;
+  holders: number;
+  entryDate: string | null;
+  zonal: string;
+  branch: string;
+  responsible: string;
+  reentry: boolean;
+  subStatus: string;
+  outcome: CreditOutcome | null;
+  instance: CreditInstance | null;
+  zonalAmount: number | null;
+  creditAmount: number | null;
+  zonalMonths: number | null;
+  creditMonths: number | null;
+  zonalGuarantee: string;
+  creditGuarantee: string;
+  followUpNote: string;
+}
+
+/** Persisted follow-up of a saved case. */
+export interface Tracking extends TrackingInput {
+  createdBy: string;
+  updatedBy: string;
+  /** Formatted for Argentina. */
+  updatedTime: string | null;
 }
 export interface CreditCase extends NewCaseInput {
   id: string;
@@ -62,6 +110,8 @@ export interface CreditCase extends NewCaseInput {
   used: number | null;
   opinion: Opinion | null;
   proposal?: Proposal;
+  /** Present only for cases saved in Fabric. */
+  tracking?: Tracking;
 }
 
 const proposals: Record<string, Proposal | undefined> = {

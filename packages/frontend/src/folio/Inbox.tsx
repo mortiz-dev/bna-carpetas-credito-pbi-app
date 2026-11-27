@@ -1,3 +1,4 @@
+import { SEGMENTS } from '@rayfin-app/shared';
 import { useState } from 'react';
 import {
   AlertTriangle,
@@ -134,7 +135,7 @@ export function Inbox({
             }}
           >
             <option value="">Todos los segmentos</option>
-            {['MiPyME', 'Gran empresa', 'Cooperativa'].map((x) => (
+            {SEGMENTS.map((x) => (
               <option key={x} value={x}>
                 {x}
               </option>

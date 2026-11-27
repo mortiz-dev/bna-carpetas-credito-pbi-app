@@ -28,8 +28,10 @@ import {
   STAGES,
   type CreditCase,
   type OpinionInput,
+  type TrackingInput,
 } from './cases';
 import { CaseEvaluation, CasePower } from './case-evaluation';
+import { CaseTracking } from './CaseTracking';
 import {
   amountLabel,
   captionStyle,
@@ -46,6 +48,7 @@ const CaseBcra = lazy(() =>
 
 const evidenceTabs = {
   evaluacion: 'Evaluación',
+  seguimiento: 'Seguimiento',
   'power-bi': 'Power BI',
   bcra: 'BCRA',
 } as const;
@@ -60,6 +63,7 @@ interface CaseDetailProps {
   onNavigate?: (record: CreditCase) => void;
   onClose(): void;
   onSaveOpinion(record: CreditCase, input: OpinionInput): Promise<void>;
+  onSaveTracking(record: CreditCase, input: TrackingInput): Promise<void>;
   initialTab?: CaseTab;
   initialReal?: boolean;
 }
@@ -447,11 +451,14 @@ export function CaseDetail({
   onNavigate,
   onClose,
   onSaveOpinion,
+  onSaveTracking,
   initialTab = 'evaluacion',
   initialReal = false,
 }: CaseDetailProps) {
   const initialEvidence: EvidenceTab =
-    initialTab === 'power-bi' || initialTab === 'bcra'
+    initialTab === 'power-bi' ||
+    initialTab === 'bcra' ||
+    initialTab === 'seguimiento'
       ? initialTab
       : 'evaluacion';
   const [evidenceTab, setEvidenceTab] = useState<EvidenceTab>(initialEvidence);
@@ -680,6 +687,14 @@ export function CaseDetail({
 
             <TabsContent value="evaluacion" className="m-0">
               <CaseEvaluation record={record} go={goEvidence} />
+            </TabsContent>
+
+            <TabsContent value="seguimiento" className="m-0">
+              <CaseTracking
+                key={record.id}
+                record={record}
+                onSave={onSaveTracking}
+              />
             </TabsContent>
 
             <TabsContent value="power-bi" className="m-0 space-y-4">
