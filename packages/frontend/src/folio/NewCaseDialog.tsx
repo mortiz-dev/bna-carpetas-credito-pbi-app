@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { AlertCircle, CheckCircle2, Minus, Plus } from 'lucide-react';
-import { normalizeCuit } from '@rayfin-app/shared';
+import { SEGMENTS, normalizeCuit } from '@rayfin-app/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,7 +22,13 @@ interface Props {
   onCreate: (values: NewCaseInput) => Promise<void>;
 }
 
-const SEGMENTS = ['MiPyME', 'Gran empresa', 'Cooperativa'] as const;
+const todayInArgentina = () =>
+  new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  }).format(new Date());
 
 export function NewCaseDialog({ initialArea, onClose, onCreate }: Props) {
   const [name, setName] = useState('');
@@ -32,6 +38,10 @@ export function NewCaseDialog({ initialArea, onClose, onCreate }: Props) {
   );
   const [holders, setHolders] = useState(1);
   const [cuit, setCuit] = useState('');
+  const [entryDate, setEntryDate] = useState(todayInArgentina);
+  const [zonal, setZonal] = useState('');
+  const [branch, setBranch] = useState('');
+  const [responsible, setResponsible] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,7 +51,7 @@ export function NewCaseDialog({ initialArea, onClose, onCreate }: Props) {
 
   function selectArea(next: Area) {
     setArea(next);
-    if (segment !== 'Cooperativa') {
+    if (!segment.startsWith('Cooperativa')) {
       setSegment(next === 'ge' ? 'Gran empresa' : 'MiPyME');
     }
   }
@@ -62,6 +72,10 @@ export function NewCaseDialog({ initialArea, onClose, onCreate }: Props) {
         segment,
         holders,
         cuit: cuit.trim() || undefined,
+        entryDate: entryDate || undefined,
+        zonal,
+        branch,
+        responsible,
       });
     } catch (cause) {
       setError(caseErrorMessage(cause));
@@ -82,7 +96,7 @@ export function NewCaseDialog({ initialArea, onClose, onCreate }: Props) {
             Nueva carpeta de crédito
           </DialogTitle>
           <DialogDescription>
-            Se guardará en tus carpetas de Fabric asociada a tu usuario.
+            Se guardará en Fabric y la verán todos los usuarios de la app. Estado, fechas y propuesta se completan después en Seguimiento.
           </DialogDescription>
         </DialogHeader>
         <form className="folio-form" onSubmit={submit}>
@@ -178,6 +192,62 @@ export function NewCaseDialog({ initialArea, onClose, onCreate }: Props) {
                   </Button>
                 </div>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label>
+                Fecha de ingreso a Crédito
+                <Input
+                  name="entryDate"
+                  type="date"
+                  value={entryDate}
+                  onChange={(e) => setEntryDate(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                <span>
+                  {area === 'ge' ? 'Oficial de crédito' : 'Equipo / analista'}{' '}
+                  <span className="font-normal text-muted-foreground">
+                    (opcional)
+                  </span>
+                </span>
+                <Input
+                  name="responsible"
+                  value={responsible}
+                  onChange={(e) => setResponsible(e.target.value)}
+                  maxLength={80}
+                />
+              </label>
+              <label>
+                <span>
+                  Zonal{' '}
+                  <span className="font-normal text-muted-foreground">
+                    (opcional)
+                  </span>
+                </span>
+                <Input
+                  name="zonal"
+                  value={zonal}
+                  onChange={(e) => setZonal(e.target.value)}
+                  maxLength={60}
+                  placeholder="Ej. Rosario"
+                />
+              </label>
+              <label>
+                <span>
+                  Sucursal{' '}
+                  <span className="font-normal text-muted-foreground">
+                    (opcional)
+                  </span>
+                </span>
+                <Input
+                  name="branch"
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
+                  maxLength={60}
+                />
+              </label>
             </div>
 
             <label>

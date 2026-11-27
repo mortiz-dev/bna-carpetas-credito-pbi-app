@@ -37,6 +37,7 @@ import {
   type CreditCase,
   type NewCaseInput,
   type OpinionInput,
+  type TrackingInput,
   type Stage,
 } from '@/folio/cases';
 import {
@@ -44,6 +45,7 @@ import {
   createCase,
   listCases,
   saveOpinion,
+  updateTracking,
 } from '@/folio/case-store';
 
 const sections = [
@@ -284,7 +286,7 @@ function App() {
     updateHash(row.id);
     setNotice(
       switchedFromDemo
-        ? 'Carpeta guardada en Mis carpetas · Fabric. Cambiamos la vista a tus carpetas reales.'
+        ? 'Carpeta guardada en Fabric. Cambiamos la vista a las carpetas reales del área.'
         : 'Carpeta guardada en Fabric.',
     );
     try {
@@ -297,7 +299,7 @@ function App() {
     } catch {
       if (listVersion.current === version)
         setNotice(
-          'La carpeta quedó guardada. Volvé a cargar Mis carpetas para actualizar el resto de la bandeja.',
+          'La carpeta quedó guardada. Volvé a cargar las carpetas de Fabric para actualizar el resto de la bandeja.',
         );
     }
   }
@@ -319,6 +321,16 @@ function App() {
       return;
     }
     const updated = await saveOpinion(record.id, input);
+    setSaved((previous) => ({
+      ...previous,
+      rows: previous.rows.map((r) => (r.id === record.id ? updated : r)),
+    }));
+  }
+
+  async function track(record: CreditCase, input: TrackingInput) {
+    if (record.source === 'demo')
+      throw new Error('Las carpetas de muestra no guardan seguimiento.');
+    const updated = await updateTracking(record.id, record.area, input);
     setSaved((previous) => ({
       ...previous,
       rows: previous.rows.map((r) => (r.id === record.id ? updated : r)),
@@ -419,7 +431,7 @@ function App() {
                     : 'text-muted-foreground hover:text-foreground',
                 )}
               >
-                Mis carpetas · Fabric
+                Carpetas · Fabric
               </button>
             </div>
 
@@ -489,7 +501,7 @@ function App() {
               onClick={() => switchSource('saved')}
               className="font-semibold text-primary hover:underline"
             >
-              Ir a Mis carpetas · Fabric →
+              Ir a Carpetas · Fabric →
             </button>
           </div>
         </div>
@@ -531,6 +543,7 @@ function App() {
               ['bcra', 'real'].includes(linkedSection) ? 'bcra' : undefined
             }
             onSaveOpinion={sign}
+            onSaveTracking={track}
           />
         )}
         {(!selected || view === 'Bandeja') && (
@@ -604,7 +617,7 @@ function App() {
                 <h2 className={titleStyle}>
                   {saved.phase === 'error'
                     ? 'No se pudo abrir tu bandeja'
-                    : 'Buscando tus carpetas en Fabric…'}
+                    : 'Buscando las carpetas en Fabric…'}
                 </h2>
                 {saved.phase === 'error' && (
                   <>

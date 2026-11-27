@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createCase, listCases, saveOpinion } from './case-store';
+import {
+  createCase,
+  listCases,
+  saveOpinion,
+  updateTracking,
+} from './case-store';
 
 const getClient = vi.hoisted(() => vi.fn());
 vi.mock('@/lib/rayfin-client', () => ({ getRayfinClient: getClient }));
@@ -49,11 +54,15 @@ describe('carpetas guardadas en Fabric', () => {
       area: 'ge',
       segment: 'MiPyME',
       holders: 2,
+      entryDate: '2026-11-26',
     });
     expect(files.create).toHaveBeenCalledWith(
       expect.objectContaining({
         company: row.company,
         owner_id: 'subject',
+        createdBy: session.user.email,
+        stage: 0,
+        subStatus: 'Pendiente en el área',
         area: 'ge',
         segment: 'MiPyME',
         holderCount: 2,
@@ -136,5 +145,68 @@ describe('carpetas guardadas en Fabric', () => {
         note: 'Falta el aval.',
       }),
     ).rejects.toThrow('Servicio no disponible');
+  });
+  it('shows legacy rows from other users with their own creator, not the viewer', async () => {
+    files.executePaginated.mockResolvedValueOnce({
+      items: [{ ...row, createdBy: 'otra@example.test' }],
+      hasNextPage: false,
+    });
+    const [file] = await listCases();
+    expect(file).toMatchObject({
+      stage: 0,
+      owner: 'otra@example.test',
+      tracking: { subStatus: 'Pendiente en el área', createdBy: 'otra@example.test' },
+    });
+  });
+
+  it('derives the common stage from the area status and stores business dates as Argentine days', async () => {
+    files.findFirst.mockResolvedValueOnce(row);
+    files.update.mockImplementationOnce(async ({ id }, input) => ({ id, ...input }));
+    const [base] = await (async () => {
+      files.executePaginated.mockResolvedValueOnce({ items: [row], hasNextPage: false });
+      return listCases();
+    })();
+    const saved = await updateTracking(row.id, 'ge', {
+      ...base.tracking!,
+      subStatus: 'Próximo comité GG',
+      instance: 'GG',
+      committeeAt: '2026-12-03',
+      ratingDueAt: '2027-01-15',
+      zonalAmount: 60,
+      creditAmount: 48,
+      zonalMonths: 12,
+      creditMonths: null,
+      zonalGuarantee: 'A sola firma',
+      creditGuarantee: '',
+    });
+    const [, changes] = files.update.mock.calls[0];
+    expect(changes).toMatchObject({
+      stage: 3,
+      outcome: null,
+      instance: 'GG',
+      updatedBy: session.user.email,
+      creditGuarantee: null,
+    });
+    expect(changes.committeeAt.toISOString()).toBe('2026-12-03T12:00:00.000Z');
+    expect(saved).toMatchObject({
+      stage: 3,
+      dueDate: '2026-12-03',
+      event: 'Comisión de crédito',
+      proposal: { zonal: 60, credit: 48, zMonths: 12, cMonths: null },
+    });
+  });
+
+  it('requires an outcome before a case can be resolved, without calling Fabric', async () => {
+    files.executePaginated.mockResolvedValueOnce({ items: [{ ...row, area: 'py' }], hasNextPage: false });
+    const [base] = await listCases();
+    getClient.mockClear();
+    await expect(
+      updateTracking(row.id, 'py', { ...base.tracking!, subStatus: 'Terminada', outcome: null }),
+    ).rejects.toThrow('aprobada o devuelta');
+    await expect(
+      updateTracking(row.id, 'py', { ...base.tracking!, committeeAt: '2026-02-30' }),
+    ).rejects.toThrow('no existe');
+    expect(getClient).not.toHaveBeenCalled();
+    expect(files.update).not.toHaveBeenCalled();
   });
 });

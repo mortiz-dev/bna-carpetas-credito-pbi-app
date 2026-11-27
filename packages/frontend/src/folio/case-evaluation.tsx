@@ -7,6 +7,7 @@ import {
 import { type ReactNode } from 'react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { OUTCOME_LABELS } from '@rayfin-app/shared';
 import { AREA_LABELS, STAGES, demoToday, type CreditCase } from './cases';
 import type { EvidenceTab } from './CaseDetail';
 import {
@@ -37,6 +38,31 @@ export function CaseFields({ items }: { items: Array<[string, ReactNode]> }) {
   );
 }
 
+function CorporateMilestones({ record }: { record: CreditCase }) {
+  const t = record.tracking!;
+  const label = (value: string | null) => (value ? shortDate(value) : 'Sin registro');
+  return (
+    <Card className={sectionStyle}>
+      <p className={captionStyle}>Circuito Grandes Empresas</p>
+      <h3 className={titleStyle}>{t.subStatus}</h3>
+      <CaseFields
+        items={[
+          ['Fecha ingreso Crédito', label(t.entryDate)],
+          ['Fecha envío RC', label(t.riskSentAt)],
+          ['Fecha devolución RC', label(t.riskReturnedAt)],
+          ['Fecha envío a Legales', label(t.legalSentAt)],
+          ['Fecha dictamen legal', label(t.legalOpinionAt)],
+          ['Comisión', label(t.committeeAt)],
+          ['Instancia', t.instance ?? 'Sin registrar'],
+          ['Vencimiento de calificación', label(t.ratingDueAt)],
+          ['Resolución', t.resolvedAt ? `${label(t.resolvedAt)}${t.outcome ? ' · ' + OUTCOME_LABELS[t.outcome] : ''}` : 'Sin resolver'],
+          ['Observaciones', t.followUpNote || 'Sin observaciones.'],
+        ]}
+      />
+    </Card>
+  );
+}
+
 function RiskComparison({ record }: { record: CreditCase }) {
   const proposal = record.proposal;
   if (!proposal)
@@ -58,9 +84,13 @@ function RiskComparison({ record }: { record: CreditCase }) {
       : Math.abs((delta / proposal.zonal) * 100);
   const direction = (delta ?? 0) < 0 ? 'menos' : 'más';
   const monthsChanged =
-    proposal.cMonths !== null && proposal.cMonths !== proposal.zMonths;
+    proposal.cMonths !== null &&
+    proposal.zMonths !== null &&
+    proposal.cMonths !== proposal.zMonths;
   const guaranteeChanged =
-    proposal.cGuarantee !== null && proposal.cGuarantee !== proposal.zGuarantee;
+    proposal.cGuarantee !== null &&
+    proposal.zGuarantee !== null &&
+    proposal.cGuarantee !== proposal.zGuarantee;
 
   return (
     <Card className={sectionStyle}>
@@ -83,7 +113,10 @@ function RiskComparison({ record }: { record: CreditCase }) {
             {amountLabel(proposal.zonal)}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {proposal.zMonths} meses · {proposal.zGuarantee}
+            {proposal.zMonths === null
+              ? 'Plazo pendiente'
+              : `${proposal.zMonths} meses`}{' '}
+            · {proposal.zGuarantee ?? 'Garantía pendiente'}
           </p>
         </div>
 
@@ -141,7 +174,11 @@ function RiskComparison({ record }: { record: CreditCase }) {
             <th scope="row" className="py-2.5 font-medium">
               Plazo
             </th>
-            <td className="tabular-nums">{proposal.zMonths} meses</td>
+            <td className="tabular-nums">
+              {proposal.zMonths === null
+                ? 'Pendiente'
+                : `${proposal.zMonths} meses`}
+            </td>
             <td
               className={cn(
                 'tabular-nums',
@@ -157,7 +194,7 @@ function RiskComparison({ record }: { record: CreditCase }) {
             <th scope="row" className="py-2.5 font-medium">
               Garantía
             </th>
-            <td className="pr-2">{proposal.zGuarantee}</td>
+            <td className="pr-2">{proposal.zGuarantee ?? 'Pendiente'}</td>
             <td className={cn(guaranteeChanged && 'font-semibold text-warning')}>
               {proposal.cGuarantee ?? 'Pendiente'}
             </td>
@@ -176,12 +213,37 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
   const closed = demo && stage === 4;
   const demoOffset = (offset: number) =>
     new Date(sampleCutoff + offset * dayInMs).toISOString().slice(0, 10);
+  const t = record.tracking;
   const entry = record.createdOn;
-  const approved = closed ? demoOffset(-2) : null;
-  const risk = demo && stage >= 1 ? demoOffset(closed ? -20 : -8) : null;
-  const legal = demo && stage >= 2 ? demoOffset(closed ? -14 : -4) : null;
-  const commission =
-    demo && stage >= 3 ? (closed ? demoOffset(-3) : record.dueDate) : null;
+  const approved = t ? t.resolvedAt : closed ? demoOffset(-2) : null;
+  const risk = t
+    ? t.riskSentAt
+    : demo && stage >= 1
+      ? demoOffset(closed ? -20 : -8)
+      : null;
+  const riskBack = t
+    ? t.riskReturnedAt
+    : demo && stage >= 2
+      ? demoOffset(closed ? -16 : -6)
+      : null;
+  const legal = t
+    ? t.legalSentAt
+    : demo && stage >= 2
+      ? demoOffset(closed ? -14 : -4)
+      : null;
+  const legalBack = t
+    ? t.legalOpinionAt
+    : demo && stage >= 3
+      ? demoOffset(closed ? -9 : -2)
+      : null;
+  const commission = t
+    ? t.committeeAt
+    : demo && stage >= 3
+      ? closed
+        ? demoOffset(-3)
+        : record.dueDate
+      : null;
+  const instance = t ? t.instance : demo && commission ? 'HD' : null;
 
   const steps = [
     {
@@ -194,8 +256,8 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
       label: 'Intervención de Riesgo',
       fields: 'RIESGO · CAL RIESGO',
       day: risk,
-      note: legal
-        ? `Calificación de Riesgo recibida el ${shortDate(demoOffset(closed ? -16 : -6))}.`
+      note: riskBack
+        ? `Calificación de Riesgo recibida el ${shortDate(riskBack)}.`
         : risk
           ? 'Calificación de Riesgo pendiente.'
           : '',
@@ -204,8 +266,8 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
       label: 'Intervención de Legales',
       fields: 'ENVIO L · DICTAMEN',
       day: legal,
-      note: commission
-        ? `Dictamen legal recibido el ${shortDate(demoOffset(closed ? -9 : -2))}.`
+      note: legalBack
+        ? `Dictamen legal recibido el ${shortDate(legalBack)}.`
         : legal
           ? 'Dictamen legal pendiente.'
           : '',
@@ -215,16 +277,23 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
       fields: 'ELEVACION · COMISION',
       day: commission,
       note: commission
-        ? 'Elevación a HD. Comisión ' + (closed ? 'realizada.' : 'programada.')
-        : '',
+        ? `Elevación${instance ? ` a ${instance}` : ''}. Comisión ` +
+          (stage === 4 ? 'realizada.' : 'programada.')
+        : instance
+          ? `Elevación a ${instance}.`
+          : '',
     },
     {
       label: 'Resolución',
       fields: 'RESOLUCION · TERMINADO',
       day: approved,
-      note: closed
-        ? 'Renovación autorizada por HD con revisión en el próximo control.'
-        : '',
+      note: t
+        ? t.outcome
+          ? OUTCOME_LABELS[t.outcome] + '.'
+          : ''
+        : closed
+          ? 'Renovación autorizada por HD con revisión en el próximo control.'
+          : '',
     },
   ];
 
@@ -306,12 +375,15 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
                     ? 'Reservado en la muestra'
                     : 'Sin registrar',
               ],
-              ['Zonal', demo ? 'Centro' : 'Sin registrar'],
-              ['Equipo', demo ? 'Crédito MiPyMEs' : 'Sin registrar'],
+              ['Zonal', demo ? 'Centro' : t?.zonal || 'Sin registrar'],
+              [
+                'Equipo',
+                demo ? 'Crédito MiPyMEs' : t?.responsible || 'Sin registrar',
+              ],
               ['Segmento', record.segment],
               [
                 'Instancia',
-                demo ? (commission ? 'HD' : 'En análisis') : 'Sin registrar',
+                instance ?? (demo ? 'En análisis' : 'Sin registrar'),
               ],
               [
                 'Terminado',
@@ -323,7 +395,7 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
                       'COMISION HD',
                       'TERMINADO',
                     ][stage]
-                  : STAGES[stage],
+                  : t?.subStatus || STAGES[stage],
               ],
               ...(demo
                 ? ([
@@ -336,9 +408,11 @@ function SmeWorkflow({ record }: { record: CreditCase }) {
                 : []),
               [
                 'Observaciones',
-                closed
-                  ? 'Se recibió documentación complementaria antes de la comisión.'
-                  : 'Sin observaciones.',
+                t
+                  ? t.followUpNote || 'Sin observaciones.'
+                  : closed
+                    ? 'Se recibió documentación complementaria antes de la comisión.'
+                    : 'Sin observaciones.',
               ],
             ]}
           />
@@ -434,7 +508,10 @@ export function CaseEvaluation({ record, go }: NavigationProps) {
   return (
     <div className="min-w-0 space-y-4">
       {record.area === 'ge' ? (
-        <RiskComparison record={record} />
+        <>
+          <RiskComparison record={record} />
+          {record.tracking && <CorporateMilestones record={record} />}
+        </>
       ) : (
         <SmeWorkflow record={record} />
       )}
@@ -459,6 +536,19 @@ export function CaseEvaluation({ record, go }: NavigationProps) {
                   : 'Muestra · Estado de carpetas MiPyMEs'
                 : 'Alta en Folio',
             ],
+            ...(record.tracking
+              ? ([
+                  ['Estado en el área', record.tracking.subStatus],
+                  ['Zonal · Sucursal', [record.tracking.zonal, record.tracking.branch].filter(Boolean).join(' · ') || 'Sin registrar'],
+                  ['Creada por', record.tracking.createdBy || 'Sin registrar'],
+                  [
+                    'Última actualización',
+                    record.tracking.updatedTime
+                      ? `${record.tracking.updatedTime} · ${record.tracking.updatedBy}`
+                      : 'Sin cambios desde el alta',
+                  ],
+                ] as Array<[string, ReactNode]>)
+              : []),
             ['Analista asignado', record.owner],
             ['Próximo hito', record.event || 'Sin programar'],
             [

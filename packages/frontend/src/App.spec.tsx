@@ -57,7 +57,7 @@ describe('Folio', () => {
     vi.mocked(listCases).mockResolvedValue(rows);
     const { unmount } = render(<App />);
     fireEvent.click(
-      screen.getByRole('button', { name: 'Mis carpetas · Fabric' }),
+      screen.getByRole('button', { name: 'Carpetas · Fabric' }),
     );
     fireEvent.click(
       await screen.findByRole('button', { name: 'Página siguiente' }),
@@ -94,7 +94,7 @@ describe('Folio', () => {
       }),
     ).toBeVisible();
     expect(
-      screen.getByRole('button', { name: 'Mis carpetas · Fabric' }),
+      screen.getByRole('button', { name: 'Carpetas · Fabric' }),
     ).toHaveAttribute('aria-pressed', 'true');
   });
 
@@ -131,7 +131,7 @@ describe('Folio', () => {
     });
     fireEvent.click(
       within(sourceGroup).getByRole('button', {
-        name: 'Mis carpetas · Fabric',
+        name: 'Carpetas · Fabric',
       }),
     );
     expect(await screen.findByRole('alert')).toHaveTextContent(

@@ -30,6 +30,7 @@ describe('Ficha de carpeta (Split Workbench)', () => {
         onNavigate={vi.fn()}
         onClose={vi.fn()}
         onSaveOpinion={save}
+        onSaveTracking={vi.fn()}
       />,
     );
 
@@ -91,7 +92,12 @@ describe('Ficha de carpeta (Split Workbench)', () => {
       opinion: null,
     };
     render(
-      <CaseDetail record={record} onClose={vi.fn()} onSaveOpinion={vi.fn()} />,
+      <CaseDetail
+        record={record}
+        onClose={vi.fn()}
+        onSaveOpinion={vi.fn()}
+        onSaveTracking={vi.fn()}
+      />,
     );
     const overview = screen.getByRole('tabpanel', { name: 'Evaluación' });
     expect(
