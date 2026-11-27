@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -124,6 +124,17 @@ function AgendaList({
   );
 }
 
+function readCaseLink(): { id: string | null; source: Source; section: string } {
+  const [id, section = ''] = location.hash.slice(1).split('/');
+  // Fabric generates UUIDs for CreditFile, while sample links use their CR codes.
+  const saved = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id);
+  return {
+    id: saved || sampleCases.some((r) => r.id === id) ? id : null,
+    source: saved ? 'saved' : 'demo',
+    section,
+  };
+}
+
 function updateHash(caseId: string | null) {
   try {
     const next = caseId ? `#${caseId}` : window.location.pathname + window.location.search;
@@ -136,23 +147,21 @@ function updateHash(caseId: string | null) {
 function App() {
   const { isDark, toggleTheme } = useTheme();
   const auth = useContext(AuthContext);
-  const [source, setSource] = useState<Source>('demo');
+  const [link] = useState(readCaseLink);
+  const [source, setSource] = useState<Source>(link.source);
   const [demo, setDemo] = useState(sampleCases);
-  const [saved, setSaved] = useState<DataState>({ phase: 'idle', rows: [] });
+  const [saved, setSaved] = useState<DataState>({
+    phase: link.source === 'saved' ? 'loading' : 'idle',
+    rows: [],
+  });
   const [view, setView] = useState<Section>('Bandeja');
   const [area, setArea] = useState<Area | 'all'>('all');
   const [stageFilter, setStageFilter] = useState<Stage | 'all'>('all');
   const [onlyWeek, setOnlyWeek] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('table');
-  const [caseId, setCaseId] = useState<string | null>(
-    () =>
-      sampleCases.find((r) => r.id === location.hash.slice(1).split('/')[0])
-        ?.id ?? null,
-  );
+  const [caseId, setCaseId] = useState(link.id);
   const [activeQueueIds, setActiveQueueIds] = useState<string[] | null>(null);
-  const [linkedSection, setLinkedSection] = useState(
-    () => location.hash.slice(1).split('/')[1],
-  );
+  const [linkedSection, setLinkedSection] = useState(link.section);
   const [createOpen, setCreateOpen] = useState(false);
   const listVersion = useRef(0);
   const lastTrigger = useRef<HTMLElement | null>(null);
@@ -192,24 +201,37 @@ function App() {
         .filter((r): r is CreditCase => Boolean(r))
     : inArea;
 
-  async function readSaved() {
+  useEffect(() => {
+    if (source !== 'saved' || saved.phase !== 'loading') return;
     const version = ++listVersion.current;
-    setSaved({ phase: 'loading', rows: [] });
-    try {
-      const rows = await listCases();
-      if (listVersion.current === version) setSaved({ phase: 'ready', rows });
-    } catch (error) {
-      if (listVersion.current === version)
-        setSaved({
-          phase: 'error',
-          rows: [],
-          message: caseErrorMessage(error),
-        });
+    let cancelled = false;
+    async function load() {
+      try {
+        const rows = await listCases();
+        if (cancelled || version !== listVersion.current) return;
+        setSaved({ phase: 'ready', rows });
+        if (caseId && !rows.some((row) => row.id === caseId)) {
+          setNotice('La carpeta del enlace no está disponible en tu bandeja.');
+          setCaseId(null);
+          updateHash(null);
+        }
+      } catch (error) {
+        if (cancelled || version !== listVersion.current) return;
+        setSaved({ phase: 'error', rows: [], message: caseErrorMessage(error) });
+      }
     }
-  }
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [source, saved.phase, caseId]);
 
   function switchSource(next: Source) {
-    if (next === source && (next === 'demo' || saved.phase === 'ready')) return;
+    if (next === source) {
+      if (saved.phase === 'error' && next === 'saved')
+        setSaved({ phase: 'loading', rows: [] });
+      return;
+    }
     setSource(next);
     setCaseId(null);
     setActiveQueueIds(null);
@@ -217,7 +239,7 @@ function App() {
     setOnlyWeek(false);
     setNotice('');
     updateHash(null);
-    if (next === 'saved') void readSaved();
+    if (next === 'saved') setSaved({ phase: 'loading', rows: [] });
   }
 
   function openRecord(record: CreditCase, queue?: CreditCase[]) {
@@ -348,7 +370,7 @@ function App() {
                     type="button"
                     aria-current={active ? 'page' : undefined}
                     onClick={() => {
-                      if (selected) closeRecord();
+                      if (caseId) closeRecord();
                       setView(id);
                     }}
                     className={cn(
@@ -433,7 +455,7 @@ function App() {
                 type="button"
                 aria-current={active ? 'page' : undefined}
                 onClick={() => {
-                  if (selected) closeRecord();
+                  if (caseId) closeRecord();
                   setView(id);
                 }}
                 className={cn(
@@ -496,7 +518,7 @@ function App() {
           </div>
         )}
 
-        {selected ? (
+        {selected && (
           <CaseDetail
             key={selected.id}
             record={selected}
@@ -510,8 +532,9 @@ function App() {
             }
             onSaveOpinion={sign}
           />
-        ) : (
-          <div className="space-y-5">
+        )}
+        {(!selected || view === 'Bandeja') && (
+          <div hidden={Boolean(selected)} className="space-y-5">
             {/* Compact Single-Row View Header */}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -591,7 +614,7 @@ function App() {
                     <Button
                       className="self-start"
                       variant="outline"
-                      onClick={() => void readSaved()}
+                      onClick={() => setSaved({ phase: 'loading', rows: [] })}
                     >
                       Volver a consultar Fabric
                     </Button>
