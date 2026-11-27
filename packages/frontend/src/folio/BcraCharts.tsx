@@ -12,29 +12,47 @@ const monthLabel = new Intl.DateTimeFormat('es-AR', {
   year: '2-digit',
   timeZone: 'UTC',
 });
+
 function monthDate(key: string) {
   return new Date(
     Date.UTC(Number(key.slice(0, 4)), Number(key.slice(4, 6)) - 1, 1),
   );
 }
 
+function situationBucket(situation: number | undefined): string {
+  if (!situation || situation <= 1) return 'Sit. 1';
+  if (situation === 2) return 'Sit. 2';
+  return 'Sit. 3+';
+}
+
 const historySpec: VisualizationSpec = {
-  mark: { type: 'bar', tooltip: true },
+  mark: { type: 'bar', cornerRadiusEnd: 4, tooltip: true },
   encoding: {
     x: {
       field: 'month',
       type: 'ordinal',
       sort: null,
-      axis: { title: null, labelAngle: -45 },
+      axis: { title: null, labelAngle: -40 },
     },
     y: {
       field: 'debt',
       type: 'quantitative',
       axis: { title: 'Miles de ARS', tickCount: 4 },
     },
+    color: {
+      field: 'situation',
+      type: 'nominal',
+      title: 'Situación',
+      scale: {
+        domain: ['Sit. 1', 'Sit. 2', 'Sit. 3+'],
+        range: ['#1a5342', '#c87517', '#c50f1f'],
+      },
+      legend: { orient: 'top', direction: 'horizontal', title: null },
+    },
     tooltip: [
       { field: 'month', type: 'nominal', title: 'Mes' },
       { field: 'debt', type: 'quantitative', title: 'Miles de ARS' },
+      { field: 'situation', type: 'nominal', title: 'Mayor situación' },
     ],
   },
 };
@@ -60,23 +78,36 @@ export function HistoryChart({
       return { label: monthLabel.format(date), data: index.get(key) };
     });
   }, [months, range]);
+
   const table = useMemo(
     () => ({
       columns: [
         { name: 'month', displayName: 'Mes' },
         { name: 'debt', displayName: 'Deuda en miles de ARS' },
+        { name: 'situation', displayName: 'Mayor situación' },
       ],
-      rows: values.map(({ label, data }) => [label, data?.total ?? null]),
+      rows: values.map(({ label, data }) => [
+        label,
+        data?.total ?? null,
+        situationBucket(data?.situation),
+      ]),
     }),
     [values],
   );
 
   return (
-    <Card className="min-w-0 gap-3 p-4">
+    <Card className="min-w-0 gap-3 rounded-2xl border border-border bg-card p-4 shadow-none">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="font-semibold">Evolución de la deuda</h3>
+        <div>
+          <h3 className="font-heading text-base font-semibold">
+            Evolución de la deuda
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            Suma mensual por titular · miles de ARS
+          </p>
+        </div>
         <select
-          className="rounded-md border bg-card px-2 py-1 text-sm"
+          className="folio-select h-8 text-xs"
           aria-label="Período del gráfico"
           value={range}
           onChange={(e) => setRange(Number(e.target.value))}
@@ -88,63 +119,78 @@ export function HistoryChart({
           ))}
         </select>
       </div>
-      <p className="text-xs text-muted-foreground">
-        Suma mensual por titular · miles de ARS
-      </p>
       <VegaVisual
         chromeless
         spec={historySpec}
         data={table}
         theme={theme}
-        style={{ height: 200 }}
+        style={{ height: 215 }}
       />
-      <details className="text-sm">
-        <summary className="cursor-pointer font-medium text-primary">
+      <details className="text-xs">
+        <summary className="cursor-pointer font-semibold text-primary">
           Ver valores por mes
         </summary>
-        <table className="mt-2 w-full text-left">
-          <thead>
-            <tr>
-              <th>Período</th>
-              <th>Miles de ARS</th>
-              <th>Mayor situación</th>
-            </tr>
-          </thead>
-          <tbody>
-            {values.map(({ label, data }) => (
-              <tr className="border-t" key={label}>
-                <td>{label}</td>
-                <td>{data ? integer.format(data.total) : 'Sin información'}</td>
-                <td>{data?.situation ?? '—'}</td>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-border text-muted-foreground">
+                <th className="py-1.5">Período</th>
+                <th className="py-1.5 text-right">Miles de ARS</th>
+                <th className="py-1.5 text-right">Mayor situación</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {values.map(({ label, data }) => (
+                <tr className="border-t border-border" key={label}>
+                  <td className="py-1.5">{label}</td>
+                  <td className="py-1.5 text-right tabular-nums">
+                    {data ? integer.format(data.total) : 'Sin información'}
+                  </td>
+                  <td className="py-1.5 text-right tabular-nums">
+                    {data?.situation ?? '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </details>
     </Card>
   );
 }
 
 const entitySpec: VisualizationSpec = {
-  mark: { type: 'bar', tooltip: true },
+  mark: { type: 'bar', cornerRadiusEnd: 4, tooltip: true },
   encoding: {
     y: {
       field: 'entity',
       type: 'nominal',
       sort: '-x',
-      axis: { title: null, labelLimit: 125 },
+      axis: { title: null, labelLimit: 135 },
     },
     x: {
       field: 'amount',
       type: 'quantitative',
       axis: { title: 'Miles de ARS', tickCount: 4 },
     },
+    color: {
+      field: 'situation',
+      type: 'nominal',
+      title: 'Situación',
+      scale: {
+        domain: ['Sit. 1', 'Sit. 2', 'Sit. 3+'],
+        range: ['#1a5342', '#c87517', '#c50f1f'],
+      },
+      legend: null,
+    },
     tooltip: [
       { field: 'entity', type: 'nominal', title: 'Entidad' },
       { field: 'amount', type: 'quantitative', title: 'Miles de ARS' },
+      { field: 'situation', type: 'nominal', title: 'Situación' },
     ],
   },
 };
+
 export function EntityChart({
   entities,
   period,
@@ -162,25 +208,32 @@ export function EntityChart({
       columns: [
         { name: 'entity', displayName: 'Entidad' },
         { name: 'amount', displayName: 'Deuda en miles de ARS' },
+        { name: 'situation', displayName: 'Situación' },
       ],
-      rows: top.map((e) => [e.name, e.amount]),
+      rows: top.map((e) => [e.name, e.amount, situationBucket(e.situation)]),
     }),
     [top],
   );
   return (
-    <Card className="min-w-0 gap-3 p-4">
-      <h3 className="font-semibold">Deuda por entidad</h3>
-      <p className="text-xs text-muted-foreground">
-        {monthLabel.format(monthDate(period))} ·{' '}
-        {entities.length > 8 ? '8 mayores entidades' : 'Entidades informantes'}{' '}
-        · miles de ARS
-      </p>
+    <Card className="min-w-0 gap-3 rounded-2xl border border-border bg-card p-4 shadow-none">
+      <div>
+        <h3 className="font-heading text-base font-semibold">
+          Deuda por entidad
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          {monthLabel.format(monthDate(period))} ·{' '}
+          {entities.length > 8
+            ? '8 mayores entidades'
+            : 'Entidades informantes'}{' '}
+          · miles de ARS
+        </p>
+      </div>
       <VegaVisual
         chromeless
         spec={entitySpec}
         data={table}
         theme={theme}
-        style={{ height: Math.max(140, top.length * 21 + 42) }}
+        style={{ height: Math.max(150, top.length * 26 + 44) }}
       />
     </Card>
   );

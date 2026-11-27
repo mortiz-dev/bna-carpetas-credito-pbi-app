@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { Landmark, ArrowRight } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle2,
+  Landmark,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { BcraPanel } from './BcraPanel';
 import { EntityChart, HistoryChart } from './BcraCharts';
+import { BcraEntityTable, BcraKpiStrip, type BcraEntityRow } from './BcraSummary';
 import { CaseFields } from './case-evaluation';
-import {
-  captionStyle,
-  numberLabel,
-  sectionStyle,
-  titleStyle,
-} from './case-format';
+import { captionStyle, sectionStyle, titleStyle } from './case-format';
 import type { CreditCase } from './cases';
 
 const sampleTotals = [
@@ -18,18 +20,38 @@ const sampleTotals = [
   5660, 5820, 5990, 6110, 6040, 5780, 5610, 5480, 5270, 5060, 5250,
 ];
 
+function sampleBcraMeta(record: CreditCase) {
+  const closedSample = record.code === 'CR-26087';
+  const parsed = Number(record.code.slice(3));
+  const detailedIndex = Number.isFinite(parsed) ? Math.max(0, parsed - 26081) : 0;
+  const total = (detailedIndex + 1) * 750;
+  return {
+    closedSample,
+    total,
+    maxSituation: closedSample ? 2 : 1,
+    cheques: closedSample ? 1 : 0,
+    pendingCoHolder: record.holders > 1,
+  };
+}
+
 function DemoReport({ record }: { record: CreditCase }) {
   const [holder, setHolder] = useState(0);
-  const closedSample = record.code === 'CR-26087';
-  const detailedIndex = Number(record.code.slice(3)) - 26081;
-  const total = (detailedIndex + 1) * 750;
+  const meta = sampleBcraMeta(record);
+  const { closedSample, total } = meta;
   const first = Math.round(total * 0.64);
-  const entities = [
-    { name: 'Banco del Estuario', amount: first, situation: 1 },
+  const entities: BcraEntityRow[] = [
+    {
+      name: 'Banco del Estuario',
+      amount: first,
+      situation: 1,
+      daysLate: 0,
+    },
     {
       name: 'Financiera del Centro',
       amount: total - first,
       situation: closedSample ? 2 : 1,
+      daysLate: closedSample ? 38 : 0,
+      review: closedSample,
     },
   ];
   const months = sampleTotals.map((value, i) => {
@@ -40,6 +62,7 @@ function DemoReport({ record }: { record: CreditCase }) {
       situation: closedSample && i >= 20 ? 2 : 1,
     };
   });
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -48,79 +71,82 @@ function DemoReport({ record }: { record: CreditCase }) {
           <h3 className={titleStyle}>
             {holder === 0 ? record.name : `Cotitular ${holder + 1}`}
           </h3>
+          {holder === 0 && (
+            <p className="text-xs text-muted-foreground">
+              Consulta simulada del {closedSample ? '20' : '26'} nov 2026 ·
+              Deuda informada para octubre de 2026
+            </p>
+          )}
         </div>
-        {record.holders > 1 && (
-          <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-            Titular
-            <select
-              className="rounded-lg border border-input bg-card px-3 py-2 text-foreground"
-              value={holder}
-              onChange={(e) => setHolder(Number(e.target.value))}
-            >
-              {Array.from({ length: record.holders }, (_, i) => (
-                <option key={i} value={i}>
-                  {i === 0 ? record.name : `Cotitular ${i + 1} · Pendiente`}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
       </div>
+
+      {record.holders > 1 && (
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Titulares de la carpeta"
+        >
+          {Array.from({ length: record.holders }, (_, i) => {
+            const active = holder === i;
+            const pending = i > 0;
+            return (
+              <button
+                key={i}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setHolder(i)}
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
+                  active
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : pending
+                      ? 'border-warning/40 bg-warning-surface text-warning hover:border-warning'
+                      : 'border-border bg-card text-foreground hover:bg-accent',
+                )}
+              >
+                {pending ? (
+                  <AlertTriangle className="size-3.5" aria-hidden="true" />
+                ) : (
+                  <CheckCircle2 className="size-3.5" aria-hidden="true" />
+                )}
+                {i === 0 ? record.name : `Cotitular ${i + 1} · Pendiente`}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {holder > 0 ? (
-        <Card className={sectionStyle}>
-          <h4 className="font-semibold">Consulta pendiente</h4>
+        <Card className={cn(sectionStyle, 'border-warning/40')}>
+          <div className="flex items-center gap-2 text-warning">
+            <AlertTriangle className="size-4" aria-hidden="true" />
+            <h4 className="font-semibold">Consulta pendiente</h4>
+          </div>
           <p className="text-sm text-muted-foreground">
-            Falta conocer la deuda y los cheques del cotitular.
+            Falta conocer la deuda y los cheques del cotitular antes de emitir
+            un dictamen definitivo. Podés cambiar a{' '}
+            <strong>Consultar por CUIT</strong> arriba para buscar un titular
+            real en la API del BCRA.
           </p>
         </Card>
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">
-            Consulta simulada del {closedSample ? '20' : '26'} nov 2026 · Deuda
-            informada para octubre de 2026.
-          </p>
-          <div className="grid grid-cols-3 divide-x divide-border overflow-hidden rounded-xl border border-border bg-card">
-            {(
-              [
-                ['Deuda informada', numberLabel(total), 'miles de ARS'],
-                [
-                  'Mayor situación',
-                  closedSample ? '2' : '1',
-                  'entre dos entidades',
-                ],
-                [
-                  'Cheques rechazados',
-                  closedSample ? '1' : '0',
-                  closedSample
-                    ? 'levantamiento informado'
-                    : 'sin registros informados',
-                ],
-              ] as const
-            ).map(([label, value, unit]) => (
-              <div className="min-w-0 px-2 py-3 sm:px-4" key={label}>
-                <p className="text-xs text-muted-foreground">{label}</p>
-                <p className="font-heading text-2xl font-semibold text-primary">
-                  {value}
-                </p>
-                <p className="text-xs text-muted-foreground">{unit}</p>
-              </div>
-            ))}
-          </div>
-          <div className="grid min-w-0 items-start gap-4 lg:grid-cols-2">
+          <BcraKpiStrip
+            totalDebt={total}
+            entityCount={entities.length}
+            maxSituation={meta.maxSituation}
+            chequesCount={meta.cheques}
+            chequesSubtitle={
+              closedSample
+                ? 'Con levantamiento informado'
+                : 'Sin registros informados'
+            }
+          />
+          <div className="grid min-w-0 items-start gap-4 xl:grid-cols-2">
             <HistoryChart months={months} />
             <EntityChart entities={entities} period="202610" />
           </div>
-          <Card className={sectionStyle}>
-            <h4 className={titleStyle}>Situación por entidad</h4>
-            <CaseFields
-              items={entities.map((e) => [
-                e.name,
-                e.situation === 2
-                  ? 'Situación 2 · 38 días de atraso · En revisión'
-                  : 'Situación 1 · Atraso no aplicable',
-              ])}
-            />
-          </Card>
+          <BcraEntityTable entities={entities} />
           <Card className={sectionStyle}>
             <h4 className={titleStyle}>Cheques rechazados</h4>
             {closedSample ? (
@@ -157,9 +183,11 @@ export function CaseBcra({
   if (record.source === 'saved') return <BcraPanel initialCuit={record.cuit} />;
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3.5">
         <div className="flex items-center gap-3">
-          <Landmark className="size-5 text-primary" />
+          <span className="grid size-9 place-items-center rounded-lg bg-accent text-primary">
+            <Landmark className="size-4" aria-hidden="true" />
+          </span>
           <div>
             <p className="text-sm font-semibold">Central de Deudores</p>
             <p className="text-xs text-muted-foreground">

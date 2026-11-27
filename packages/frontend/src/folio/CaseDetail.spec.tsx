@@ -16,36 +16,50 @@ vi.mock('./case-bcra', () => ({
 
 afterEach(cleanup);
 
-describe('Ficha de carpeta', () => {
-  it('conserva el borrador mientras el analista revisa una fuente y permite reintentar el guardado', async () => {
+describe('Ficha de carpeta (Split Workbench)', () => {
+  it('mantiene visible y conserva el borrador del dictamen mientras el analista revisa Power BI y BCRA y permite reintentar el guardado', async () => {
     const record = sampleCases.find((r) => r.code === 'CR-26082')!;
     const save = vi
       .fn()
       .mockRejectedValueOnce(new Error('Error de prueba'))
       .mockResolvedValueOnce(undefined);
     render(
-      <CaseDetail record={record} onClose={vi.fn()} onSaveOpinion={save} />,
+      <CaseDetail
+        record={record}
+        queue={sampleCases}
+        onNavigate={vi.fn()}
+        onClose={vi.fn()}
+        onSaveOpinion={save}
+      />,
     );
+
     expect(screen.getByText('ARS 12 M menos')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Redactar dictamen' }));
+
+    // Dictamen panel is persistently visible alongside evidence
     const opinion = screen.getByRole('form', { name: 'Dictamen del analista' });
-    fireEvent.change(within(opinion).getByRole('combobox'), {
-      target: { value: 'Acompañar con condiciones' },
-    });
+    fireEvent.click(
+      within(opinion).getByRole('radio', { name: 'Con condiciones' }),
+    );
     fireEvent.change(within(opinion).getByRole('textbox'), {
       target: { value: 'Revisar el aval.' },
     });
+
+    // Switch evidence tabs on the left while opinion stays visible on the right
     fireEvent.click(
       screen.getByRole('button', { name: 'Abrir fuente: Power BI' }),
     );
+    expect(within(opinion).getByRole('textbox')).toHaveValue(
+      'Revisar el aval.',
+    );
+
     fireEvent.click(screen.getByRole('button', { name: 'Consultar BCRA' }));
     expect(
       await screen.findByRole('heading', { name: 'Antecedentes por titular' }),
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Ir al dictamen' }));
     expect(within(opinion).getByRole('textbox')).toHaveValue(
       'Revisar el aval.',
     );
+
     fireEvent.submit(opinion);
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Error de prueba',

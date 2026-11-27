@@ -1,5 +1,11 @@
 import { useId, useState, type FormEvent } from 'react';
-import { Landmark, LoaderCircle, Search } from 'lucide-react';
+import {
+  CheckCircle2,
+  ExternalLink,
+  Landmark,
+  LoaderCircle,
+  Search,
+} from 'lucide-react';
 import { normalizeCuit } from '@rayfin-app/shared';
 import type { AppFunctionsSchema } from '@rayfin-app/functions/types';
 import { getRayfinClient } from '@/lib/rayfin-client';
@@ -7,14 +13,16 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { EntityChart, HistoryChart } from './BcraCharts';
+import { BcraEntityTable, BcraKpiStrip } from './BcraSummary';
+import { formatCuitDisplay, sectionStyle, titleStyle } from './case-format';
 
 type Report = AppFunctionsSchema['consultarBcra']['output'];
+
 const ars = new Intl.NumberFormat('es-AR', {
   style: 'currency',
   currency: 'ARS',
   currencyDisplay: 'code',
 });
-const number = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 2 });
 const consulted = new Intl.DateTimeFormat('es-AR', {
   dateStyle: 'medium',
   timeStyle: 'short',
@@ -32,7 +40,7 @@ function SourceNote({
 }) {
   return (
     <p
-      className="rounded-md bg-muted p-3 text-sm"
+      className="rounded-lg bg-muted p-3 text-sm text-muted-foreground"
       role={result.state === 'error' ? 'alert' : 'status'}
     >
       {result.state === 'error' ? result.message : empty}
@@ -45,93 +53,75 @@ function BcraResults({ report }: { report: Report }) {
   const subject = [current, history, cheques].find(
     (result) => result.state === 'ok',
   )?.subject;
+
+  const currentEntities =
+    current.state === 'ok' ? current.value.entities : null;
+  const totalDebt = currentEntities
+    ? currentEntities.reduce((sum, e) => sum + e.amount, 0)
+    : null;
+  const maxSituation =
+    currentEntities && currentEntities.length > 0
+      ? Math.max(...currentEntities.map((e) => e.situation))
+      : null;
+  const chequesCount =
+    cheques.state === 'ok'
+      ? cheques.value.length
+      : cheques.state === 'empty'
+        ? 0
+        : null;
+  const chequesSubtitle =
+    cheques.state === 'ok'
+      ? `${cheques.value.length} ${cheques.value.length === 1 ? 'registro informado' : 'registros informados'}`
+      : cheques.state === 'empty'
+        ? 'Sin registros informados'
+        : 'Consulta con error';
+
   return (
     <div className="grid min-w-0 gap-4" aria-label="Resultado de la consulta">
-      <header>
-        <h3 className="text-xl font-semibold">
-          {subject || 'Resultado por CUIT'}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          CUIT {report.cuit} · Consulta{' '}
-          {consulted.format(new Date(report.consultedAt))} (Argentina)
-        </p>
+      <header className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <h3 className={titleStyle}>{subject || 'Resultado por CUIT'}</h3>
+          <p className="text-xs text-muted-foreground tabular-nums">
+            CUIT {formatCuitDisplay(report.cuit)} · Consulta{' '}
+            {consulted.format(new Date(report.consultedAt))} (Argentina)
+            {current.state === 'ok' &&
+              ` · Período ${current.value.period.slice(4)}/${current.value.period.slice(0, 4)}`}
+          </p>
+        </div>
+        <a
+          href={guide}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+        >
+          Manual API BCRA <ExternalLink className="size-3" aria-hidden="true" />
+        </a>
       </header>
-      <Card className="gap-2 p-4">
-        <h3 className="font-semibold">Deuda informada</h3>
-        {current.state !== 'ok' ? (
+
+      <BcraKpiStrip
+        totalDebt={totalDebt}
+        entityCount={currentEntities?.length ?? 0}
+        maxSituation={maxSituation}
+        chequesCount={chequesCount}
+        chequesSubtitle={chequesSubtitle}
+      />
+
+      {current.state !== 'ok' && (
+        <Card className={sectionStyle}>
+          <h4 className="font-semibold">Deuda informada</h4>
           <SourceNote
             result={current}
             empty="Sin registros informados en la consulta de deuda actual."
           />
-        ) : (
-          <>
-            <p className="text-lg font-semibold">
-              {number.format(
-                current.value.entities.reduce((sum, e) => sum + e.amount, 0),
-              )}{' '}
-              miles de ARS
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {current.value.entities.length} entidades · Período{' '}
-              {current.value.period.slice(4)}/{current.value.period.slice(0, 4)}
-            </p>
-            <details className="min-w-0 text-sm">
-              <summary className="cursor-pointer font-medium text-primary">
-                Ver situación por entidad
-              </summary>
-              <div className="mt-3 overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr>
-                      {[
-                        'Entidad',
-                        'Miles de ARS',
-                        'Situación',
-                        'Atraso',
-                        'Observaciones',
-                      ].map((label) => (
-                        <th key={label} className="p-2">
-                          {label}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {current.value.entities.map((e, i) => (
-                      <tr key={i} className="border-t">
-                        <td className="p-2">{e.name}</td>
-                        <td className="p-2">{number.format(e.amount)}</td>
-                        <td className="p-2">{e.situation}</td>
-                        <td className="p-2">
-                          {e.daysLate === null
-                            ? 'Sin dato'
-                            : e.daysLate === 0
-                              ? 'No aplicable'
-                              : e.daysLate + ' días'}
-                        </td>
-                        <td className="p-2">
-                          {[
-                            e.review && 'En revisión',
-                            e.court && 'Proceso judicial',
-                          ]
-                            .filter(Boolean)
-                            .join(' · ') || '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </details>
-          </>
-        )}
-      </Card>
-      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+        </Card>
+      )}
+
+      <div className="grid min-w-0 gap-4 xl:grid-cols-2">
         {history.state === 'ok' ? (
           <HistoryChart months={history.value} />
         ) : (
-          <Card className="gap-2 p-4">
-            <h3 className="font-semibold">Historial de deuda</h3>
+          <Card className={sectionStyle}>
+            <h4 className="font-semibold">Historial de deuda</h4>
             <SourceNote
               result={history}
               empty="Sin períodos históricos informados."
@@ -145,8 +135,13 @@ function BcraResults({ report }: { report: Report }) {
           />
         )}
       </div>
-      <Card className="gap-3 p-4">
-        <h3 className="font-semibold">Cheques rechazados</h3>
+
+      {currentEntities && currentEntities.length > 0 && (
+        <BcraEntityTable entities={currentEntities} />
+      )}
+
+      <Card className={sectionStyle}>
+        <h4 className={titleStyle}>Cheques rechazados</h4>
         {cheques.state !== 'ok' ? (
           <SourceNote
             result={cheques}
@@ -154,15 +149,19 @@ function BcraResults({ report }: { report: Report }) {
           />
         ) : (
           <>
-            <p className="text-sm text-muted-foreground">
-              {cheques.value.length} registros · Importes en pesos
+            <p className="text-xs text-muted-foreground">
+              {cheques.value.length} registros · Importes en pesos argentinos
             </p>
             {cheques.value.map((c, i) => (
-              <details key={i} className="border-t pt-3 text-sm">
-                <summary className="cursor-pointer font-medium">
+              <details
+                key={i}
+                className="border-t border-border pt-3 text-sm"
+                open={cheques.value.length <= 3}
+              >
+                <summary className="cursor-pointer font-medium tabular-nums">
                   {c.rejected} · {c.cause} · {ars.format(c.amount)}
                 </summary>
-                <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+                <dl className="mt-2 grid gap-2 text-xs sm:grid-cols-2">
                   {[
                     ['Cheque', c.number],
                     ['Entidad (código)', c.bank],
@@ -181,7 +180,7 @@ function BcraResults({ report }: { report: Report }) {
                   ].map(([key, value]) => (
                     <div key={key}>
                       <dt className="text-muted-foreground">{key}</dt>
-                      <dd>{value}</dd>
+                      <dd className="font-medium">{value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -190,28 +189,25 @@ function BcraResults({ report }: { report: Report }) {
           </>
         )}
       </Card>
-      <a
-        href={guide}
-        target="_blank"
-        rel="noreferrer"
-        className="text-sm font-medium text-primary underline"
-      >
-        Manual de la API Central de Deudores
-      </a>
     </div>
   );
 }
 
 export function BcraPanel({ initialCuit = '' }: { initialCuit?: string }) {
   const inputId = useId();
-  const [input, setInput] = useState(initialCuit);
+  const [input, setInput] = useState(() =>
+    initialCuit ? formatCuitDisplay(initialCuit) : '',
+  );
   const [report, setReport] = useState<Report | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const normalized = normalizeCuit(input);
+  const digitsCount = input.replace(/\D/g, '').length;
+
   async function consult(event: FormEvent) {
     event.preventDefault();
     if (loading) return;
-    setReport(null);
     setError('');
     const cuit = normalizeCuit(input);
     if (!cuit) {
@@ -221,12 +217,11 @@ export function BcraPanel({ initialCuit = '' }: { initialCuit?: string }) {
     setLoading(true);
     try {
       const client = await getRayfinClient();
-      setReport(
-        await client.functions.consultarBcra.invoke(
-          { cuit },
-          { timeoutMs: 25_000 },
-        ),
+      const next = await client.functions.consultarBcra.invoke(
+        { cuit },
+        { timeoutMs: 25_000 },
       );
+      setReport(next);
     } catch {
       setError(
         'No se pudo ejecutar la consulta. Verificá tu sesión y la disponibilidad de la función BCRA.',
@@ -235,45 +230,59 @@ export function BcraPanel({ initialCuit = '' }: { initialCuit?: string }) {
       setLoading(false);
     }
   }
+
   return (
     <section className="grid min-w-0 gap-4">
-      <Card className="gap-3 p-5">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
-          <Landmark size={16} aria-hidden /> API oficial · Consulta real
+      <Card className={sectionStyle}>
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+          <Landmark className="size-4" aria-hidden="true" /> API oficial ·
+          Consulta real
         </div>
-        <h3 className="text-xl font-semibold">Buscar titular por CUIT</h3>
-        <p className="text-sm text-muted-foreground">
-          Deuda, historial y cheques rechazados del titular consultado.
-        </p>
+        <div>
+          <h3 className={titleStyle}>Buscar titular por CUIT</h3>
+          <p className="text-xs text-muted-foreground">
+            Deuda vigente, evolución histórica y cheques rechazados en la
+            Central de Deudores del BCRA.
+          </p>
+        </div>
         <form onSubmit={consult} className="flex flex-wrap items-end gap-3">
-          <label className="grid gap-1 text-sm font-medium" htmlFor={inputId}>
+          <label
+            className="grid min-w-52 flex-1 gap-1 text-xs font-semibold sm:flex-none"
+            htmlFor={inputId}
+          >
             CUIT
             <Input
               id={inputId}
               value={input}
               inputMode="numeric"
-              maxLength={16}
+              maxLength={13}
               required
               disabled={loading}
+              className="font-mono tabular-nums"
               onChange={(event) => {
-                setInput(event.target.value);
-                setReport(null);
+                setInput(formatCuitDisplay(event.target.value));
                 setError('');
               }}
-              placeholder="11 dígitos"
+              placeholder="XX-XXXXXXXX-X"
             />
           </label>
           <Button type="submit" disabled={loading}>
             {loading ? (
-              <LoaderCircle className="animate-spin" aria-hidden />
+              <LoaderCircle className="animate-spin" aria-hidden="true" />
             ) : (
-              <Search aria-hidden />
+              <Search aria-hidden="true" />
             )}
             {loading ? 'Consultando…' : 'Consultar BCRA'}
           </Button>
+          {digitsCount === 11 && normalized && !error && (
+            <span className="inline-flex items-center gap-1 pb-2 text-xs font-medium text-success">
+              <CheckCircle2 className="size-3.5" aria-hidden="true" /> CUIT
+              válido
+            </span>
+          )}
         </form>
         {loading && (
-          <p role="status" className="text-sm">
+          <p role="status" className="text-sm text-muted-foreground">
             Consultando la Central de Deudores…
           </p>
         )}
