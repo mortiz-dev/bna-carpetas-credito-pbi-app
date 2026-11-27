@@ -1,24 +1,27 @@
-import { lazy, Suspense, useRef, useState, type FormEvent } from 'react';
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react';
 import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
   FolderOpen,
   Sparkles,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import {
   AREA_LABELS,
   OPINION_CHOICES,
@@ -26,12 +29,7 @@ import {
   type CreditCase,
   type OpinionInput,
 } from './cases';
-import {
-  CaseEvaluation,
-  CaseFields,
-  CasePower,
-  SourceButtons,
-} from './case-evaluation';
+import { CaseEvaluation, CasePower } from './case-evaluation';
 import {
   amountLabel,
   captionStyle,
@@ -39,42 +37,51 @@ import {
   sectionStyle,
   shortDate,
   titleStyle,
+  urgencyInfo,
 } from './case-format';
 
 const CaseBcra = lazy(() =>
   import('./case-bcra').then(({ CaseBcra }) => ({ default: CaseBcra })),
 );
 
-const detailTabs = {
+const evidenceTabs = {
   evaluacion: 'Evaluación',
   'power-bi': 'Power BI',
   bcra: 'BCRA',
-  consultas: 'Consultas IA',
-  dictamen: 'Dictamen',
-};
-export type CaseTab = keyof typeof detailTabs;
+} as const;
+export type EvidenceTab = keyof typeof evidenceTabs;
+
+export type CaseTab = EvidenceTab | 'consultas' | 'dictamen';
 
 interface CaseDetailProps {
   record: CreditCase;
+  today?: string;
+  queue?: CreditCase[];
+  onNavigate?: (record: CreditCase) => void;
   onClose(): void;
   onSaveOpinion(record: CreditCase, input: OpinionInput): Promise<void>;
   initialTab?: CaseTab;
   initialReal?: boolean;
 }
 
+const OPINION_SHORT: Record<string, string> = {
+  'Acompañar propuesta': 'Acompañar',
+  'Acompañar con condiciones': 'Con condiciones',
+  'Solicitar información': 'Solicitar info',
+  'Desaconsejar propuesta': 'Desaconsejar',
+};
+
 function OpinionPanel({
   record,
   onSaveOpinion,
-  go,
-}: Pick<CaseDetailProps, 'record' | 'onSaveOpinion'> & {
-  go(tab: CaseTab): void;
-}) {
+}: Pick<CaseDetailProps, 'record' | 'onSaveOpinion'>) {
   const saved = record.opinion;
   const [editing, setEditing] = useState(!saved);
   const [choice, setChoice] = useState(saved?.choice ?? '');
   const [note, setNote] = useState(saved?.note ?? '');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
@@ -97,132 +104,187 @@ function OpinionPanel({
       setSubmitting(false);
     }
   }
+
   function resetDraft() {
     setChoice(saved?.choice ?? '');
     setNote(saved?.note ?? '');
     setError('');
   }
+
+  function insertEvidenceSnippet() {
+    const parts: string[] = [];
+    if (
+      record.source === 'demo' &&
+      record.limit !== null &&
+      record.used !== null &&
+      record.limit > 0
+    ) {
+      const pct = numberLabel((record.used / record.limit) * 100);
+      parts.push(
+        `Exposición interna: ${amountLabel(record.used)} / ${amountLabel(record.limit)} (${pct} %).`,
+      );
+    }
+    if (record.proposal?.credit != null) {
+      parts.push(
+        `Propuesta Zonal ${amountLabel(record.proposal.zonal)} vs. Crédito ${amountLabel(record.proposal.credit)}.`,
+      );
+    }
+    if (record.holders > 1 && record.source === 'demo') {
+      parts.push('Pendiente verificar consulta BCRA del segundo cotitular.');
+    }
+    if (!parts.length) {
+      parts.push(
+        `Carpeta ${record.code} (${AREA_LABELS[record.area]} · ${record.segment}) en etapa ${STAGES[record.stage]}.`,
+      );
+    }
+    const snippet = parts.join(' ');
+    setNote((prev) => (prev.trim() ? `${prev.trim()}\n${snippet}` : snippet));
+  }
+
+  if (!editing && saved) {
+    return (
+      <div className="space-y-3 p-4 sm:p-5">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-success-surface px-2.5 py-1 text-xs font-semibold text-success">
+          <CheckCircle2 className="size-3.5" aria-hidden="true" />
+          Dictamen registrado
+        </div>
+        <h3 className={titleStyle}>{saved.choice}</h3>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+          {saved.note}
+        </p>
+        <p className="border-t border-border pt-2.5 text-xs text-muted-foreground">
+          {saved.author} · {saved.time}
+        </p>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => {
+            resetDraft();
+            setEditing(true);
+          }}
+        >
+          Editar dictamen
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid items-start gap-4 md:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
-      <Card className={sectionStyle}>
-        {editing || !saved ? (
-          <form
-            className="grid gap-4"
-            onSubmit={submit}
-            aria-label="Dictamen del analista"
-          >
-            <div>
-              <p className={captionStyle}>Dictamen del analista</p>
-              <h3 className={titleStyle}>
-                {saved ? 'Editar dictamen' : 'Dejar dictamen'}
-              </h3>
-            </div>
-            <label className="grid gap-1.5 text-sm font-semibold">
-              Recomendación
-              <select
-                value={choice}
-                onChange={(e) => setChoice(e.target.value)}
-                required
+    <form
+      className="grid gap-4 p-4 sm:p-5"
+      onSubmit={submit}
+      aria-label="Dictamen del analista"
+    >
+      <div>
+        <p className={captionStyle}>Criterio del analista</p>
+        <h3 className={titleStyle}>
+          {saved ? 'Editar dictamen' : 'Redactar dictamen'}
+        </h3>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Mantené abierta la evidencia a la izquierda mientras fundamentás tu
+          decisión.
+        </p>
+      </div>
+
+      <div className="grid gap-1.5">
+        <span className="text-xs font-semibold text-foreground">
+          Recomendación
+        </span>
+        <div
+          className="grid grid-cols-2 gap-2"
+          role="radiogroup"
+          aria-label="Recomendación"
+        >
+          {OPINION_CHOICES.map((option) => {
+            const active = choice === option;
+            return (
+              <button
+                key={option}
+                type="button"
+                role="radio"
+                aria-checked={active}
                 disabled={submitting}
-                className="w-full rounded-lg border border-input bg-card px-3 py-2 font-normal"
+                onClick={() => {
+                  setChoice(option);
+                  setError('');
+                }}
+                className={cn(
+                  'rounded-lg border px-2.5 py-2 text-left text-xs font-semibold transition-colors',
+                  active
+                    ? 'border-primary bg-secondary text-secondary-foreground'
+                    : 'border-input bg-background text-foreground hover:bg-accent',
+                )}
               >
-                <option value="">Elegí una opción</option>
-                {OPINION_CHOICES.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-1.5 text-sm font-semibold">
-              Fundamentos y condiciones
-              <Textarea
-                placeholder="¿Qué evidencia sustenta tu recomendación?"
-                rows={5}
-                maxLength={3000}
-                required
-                value={note}
-                disabled={submitting}
-                onChange={(e) => setNote(e.target.value)}
-                className="min-h-28 resize-y bg-card font-normal"
-              />
-            </label>
-            <p className="text-xs text-muted-foreground">
-              {record.source === 'demo'
-                ? 'El dictamen de muestra se conserva en esta sesión de demostración.'
-                : 'El dictamen quedará asociado a tu identidad de Fabric.'}
-            </p>
-            {error && (
-              <p role="alert" className="text-sm text-destructive">
-                {error}
-              </p>
-            )}
-            <div className="flex flex-wrap justify-end gap-2">
-              {saved && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={submitting}
-                  onClick={() => {
-                    resetDraft();
-                    setEditing(false);
-                  }}
-                >
-                  Cancelar edición
-                </Button>
-              )}
-              <Button type="submit" disabled={submitting}>
-                {submitting ? 'Registrando…' : 'Registrar dictamen'}
-              </Button>
-            </div>
-          </form>
-        ) : (
-          <div className="space-y-3">
-            <div className={captionStyle}>
-              <CheckCircle2 className="mr-1 inline size-4" />
-              Dictamen registrado
-            </div>
-            <h3 className={titleStyle}>{saved.choice}</h3>
-            <p className="whitespace-pre-wrap break-words text-sm">
-              {saved.note}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {saved.author} · {saved.time}
-            </p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                resetDraft();
-                setEditing(true);
-              }}
-            >
-              Editar dictamen
-            </Button>
-          </div>
-        )}
-      </Card>
-      <Card className={sectionStyle}>
-        <h3 className={titleStyle}>Datos para el dictamen</h3>
-        <CaseFields
-          items={[
-            ['Área responsable', AREA_LABELS[record.area]],
-            ...(record.proposal
-              ? [
-                  [
-                    'Zonal / Crédito',
-                    `${amountLabel(record.proposal.zonal)} / ${amountLabel(record.proposal.credit)}`,
-                  ] as [string, string],
-                ]
-              : []),
-            [
-              'Saldo interno',
-              record.source === 'demo' && record.used !== null
-                ? `${amountLabel(record.used)} · muestra`
-                : 'Sin vincular',
-            ],
-          ]}
+                {OPINION_SHORT[option] ?? option}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid gap-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <label
+            htmlFor="opinion-note-input"
+            className="text-xs font-semibold text-foreground"
+          >
+            Fundamentos y condiciones
+          </label>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={insertEvidenceSnippet}
+            className="text-xs font-semibold text-primary hover:underline"
+          >
+            + Insertar datos clave
+          </button>
+        </div>
+        <Textarea
+          id="opinion-note-input"
+          placeholder="¿Qué evidencia sustenta tu recomendación?"
+          rows={6}
+          maxLength={3000}
+          required
+          value={note}
+          disabled={submitting}
+          onChange={(e) => setNote(e.target.value)}
+          className="min-h-32 resize-y bg-background text-sm font-normal"
         />
-        <SourceButtons go={go} />
-      </Card>
-    </div>
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>
+            {record.source === 'demo'
+              ? 'Conservado en esta sesión de muestra'
+              : 'Asociado a tu identidad de Fabric'}
+          </span>
+          <span className="tabular-nums">{note.length} / 3000</span>
+        </div>
+      </div>
+
+      {error && (
+        <p role="alert" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
+
+      <div className="flex flex-wrap justify-end gap-2">
+        {saved && (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={submitting}
+            onClick={() => {
+              resetDraft();
+              setEditing(false);
+            }}
+          >
+            Cancelar
+          </Button>
+        )}
+        <Button type="submit" className="flex-1 sm:flex-none" disabled={submitting}>
+          {submitting ? 'Registrando…' : 'Registrar dictamen'}
+        </Button>
+      </div>
+    </form>
   );
 }
 
@@ -231,19 +293,21 @@ const suggestions = [
   '¿Cuál es la exposición?',
   '¿Qué falta revisar?',
 ];
+
 function CaseQuestions({
   record,
-  go,
+  goEvidence,
 }: {
   record: CreditCase;
-  go(tab: CaseTab): void;
+  goEvidence(tab: EvidenceTab): void;
 }) {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState<{
     question: string;
     answer: string;
-    tab: CaseTab;
+    tab?: EvidenceTab;
   } | null>(null);
+
   function answer(input: string) {
     const q = input.trim();
     if (!q) return;
@@ -280,53 +344,73 @@ function CaseQuestions({
       setResponse({
         question: q,
         answer:
-          'Esta demostración cubre las preguntas sugeridas. Elegí una para ver la respuesta y su fuente.',
-        tab: 'consultas',
+          'Esta demostración cubre las preguntas sugeridas. Elegí una para ver la respuesta y saltar a su fuente.',
       });
     }
     setQuestion('');
   }
-  if (record.source === 'saved')
+
+  if (record.source === 'saved') {
     return (
-      <Card className={sectionStyle}>
+      <div className="space-y-3 p-4 sm:p-5">
         <p className={captionStyle}>Consultas IA</p>
         <h3 className={titleStyle}>Asistente pendiente de conexión</h3>
         <p className="text-sm text-muted-foreground">
           Las preguntas sobre tus modelos requieren una conexión con Fabric IQ.
-          Podés revisar los datos disponibles en las secciones de la carpeta.
+          Mientras tanto, podés recorrer la evidencia a la izquierda.
         </p>
-        <SourceButtons go={go} />
-      </Card>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => goEvidence('power-bi')}
+          >
+            Ver Power BI
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => goEvidence('bcra')}>
+            Ver BCRA
+          </Button>
+        </div>
+      </div>
     );
+  }
+
   return (
-    <Card className={sectionStyle}>
-      <p className={captionStyle}>
-        <Sparkles className="mr-1 inline size-4" /> Consultas IA · Simulación
-      </p>
-      <h3 className={titleStyle}>Preguntá sobre esta carpeta</h3>
-      <p className="text-sm text-muted-foreground">
-        Respuestas de ejemplo con referencias a los datos ficticios de{' '}
-        {record.name}.
-      </p>
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-3 p-4 sm:p-5">
+      <div>
+        <p className={captionStyle}>
+          <Sparkles className="mr-1 inline size-3.5" aria-hidden="true" />
+          Consultas IA · Simulación
+        </p>
+        <h3 className={titleStyle}>Preguntá sobre esta carpeta</h3>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Respuestas de ejemplo sobre {record.name} con acceso directo a cada
+          sección.
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-1.5">
         {suggestions.map((q) => (
-          <Button key={q} variant="outline" size="sm" onClick={() => answer(q)}>
+          <Button key={q} variant="outline" size="xs" onClick={() => answer(q)}>
             {q}
           </Button>
         ))}
       </div>
       <div aria-live="polite">
         {response && (
-          <div className="space-y-2 rounded-xl bg-accent p-4 text-sm">
-            <p className="font-semibold">{response.question}</p>
-            <p>{response.answer}</p>
-            {response.tab !== 'consultas' && (
+          <div className="space-y-2 rounded-xl border border-border bg-accent/80 p-3.5 text-sm">
+            <p className="text-xs font-semibold text-foreground">
+              {response.question}
+            </p>
+            <p className="text-xs leading-relaxed text-foreground">
+              {response.answer}
+            </p>
+            {response.tab && (
               <Button
-                size="sm"
+                size="xs"
                 variant="outline"
-                onClick={() => go(response.tab)}
+                onClick={() => goEvidence(response.tab!)}
               >
-                Ver fuente de muestra · {detailTabs[response.tab]}{' '}
+                Abrir {evidenceTabs[response.tab]}{' '}
                 <ArrowRight className="size-3" />
               </Button>
             )}
@@ -348,151 +432,359 @@ function CaseQuestions({
           required
           onChange={(e) => setQuestion(e.target.value)}
         />
-        <Button type="submit" aria-label="Enviar consulta">
+        <Button type="submit" size="icon-sm" aria-label="Enviar consulta">
           <ArrowRight className="size-4" />
         </Button>
       </form>
-    </Card>
+    </div>
   );
 }
 
 export function CaseDetail({
   record,
+  today = '2026-11-26',
+  queue,
+  onNavigate,
   onClose,
   onSaveOpinion,
   initialTab = 'evaluacion',
   initialReal = false,
 }: CaseDetailProps) {
-  const [tab, setTab] = useState<CaseTab>(initialTab);
-  const [bcraVisited, setBcraVisited] = useState(initialTab === 'bcra');
-  const content = useRef<HTMLDivElement>(null);
-  function go(value: string) {
-    if (!Object.hasOwn(detailTabs, value)) return;
+  const initialEvidence: EvidenceTab =
+    initialTab === 'power-bi' || initialTab === 'bcra'
+      ? initialTab
+      : 'evaluacion';
+  const [evidenceTab, setEvidenceTab] = useState<EvidenceTab>(initialEvidence);
+  const [decisionTab, setDecisionTab] = useState<'dictamen' | 'consultas'>(
+    initialTab === 'consultas' ? 'consultas' : 'dictamen',
+  );
+  const [bcraVisited, setBcraVisited] = useState(initialEvidence === 'bcra');
+  const workbenchTop = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return;
+      const tag = (event.target as HTMLElement | null)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      onClose();
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  function goEvidence(value: string) {
+    if (!Object.hasOwn(evidenceTabs, value)) return;
     if (value === 'bcra') setBcraVisited(true);
-    setTab(value as CaseTab);
-    if (content.current) content.current.scrollTop = 0;
+    setEvidenceTab(value as EvidenceTab);
+    workbenchTop.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
   }
+
+  const list = queue && queue.length > 0 ? queue : [record];
+  const currentIdx = list.findIndex((item) => item.id === record.id);
+  const prevRecord = currentIdx > 0 ? list[currentIdx - 1] : null;
+  const nextRecord =
+    currentIdx >= 0 && currentIdx < list.length - 1
+      ? list[currentIdx + 1]
+      : null;
+
+  const hasExposure =
+    record.source === 'demo' &&
+    record.limit !== null &&
+    record.used !== null &&
+    record.limit > 0;
+  const pct = hasExposure ? (record.used! / record.limit!) * 100 : null;
+  const urgency = urgencyInfo(record.dueDate, today);
+  const bcraBadgeText =
+    record.source === 'demo'
+      ? record.code === 'CR-26087'
+        ? 'Sit. 2 · 1 cheque'
+        : record.holders > 1
+          ? 'Sit. 1 · 1 cotitular pend.'
+          : 'Sit. 1 · Sin alertas'
+      : record.cuit
+        ? 'CUIT cargado'
+        : 'Sin consultar';
+  const bcraAlert =
+    record.source === 'demo' &&
+    (record.code === 'CR-26087' || record.holders > 1);
+
   return (
-    <Dialog
-      open
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
+    <article
+      ref={workbenchTop}
+      aria-label={`Expediente de ${record.name}`}
+      className="space-y-5"
     >
-      <DialogContent className="flex max-h-[94dvh] max-w-[calc(100%-1rem)] flex-col gap-0 overflow-hidden bg-background p-0 sm:max-w-5xl">
-        <DialogHeader className="space-y-2 border-b border-border bg-card px-4 pt-5 pb-4 text-left sm:px-6">
-          <p className={captionStyle}>
-            <FolderOpen aria-hidden="true" className="mr-1 inline size-4" />{' '}
-            {record.code} {record.source === 'demo' ? '· Datos de muestra' : ''}
-          </p>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <DialogTitle className="font-heading text-2xl leading-tight font-semibold tracking-tight break-words sm:text-3xl">
-              {record.name}
-            </DialogTitle>
-            <Badge variant="secondary">{STAGES[record.stage]}</Badge>
-          </div>
-          <DialogDescription className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-            <span>Área · {AREA_LABELS[record.area]}</span>
-            <span>Segmento · {record.segment}</span>
-            <span>
-              {record.holders} {record.holders === 1 ? 'titular' : 'titulares'}
+      {/* Executive Header Card */}
+      <Card className="gap-4 rounded-2xl border border-border bg-card p-4 shadow-none sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="outline" onClick={onClose}>
+              <ArrowLeft className="size-4" />
+              Mesa de crédito
+            </Button>
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <FolderOpen className="size-3.5 text-primary" aria-hidden="true" />
+              {record.code}
+              {record.source === 'demo' ? ' · Datos de muestra' : ''}
             </span>
-          </DialogDescription>
-        </DialogHeader>
-        <Tabs
-          value={tab}
-          onValueChange={go}
-          className="flex min-h-0 flex-1 flex-col gap-0"
-        >
-          <div className="shrink-0 overflow-x-auto border-b border-border bg-card px-3 sm:px-5">
-            <TabsList
-              className="h-auto w-max gap-1 rounded-none bg-transparent p-0"
-              aria-label="Secciones de la carpeta"
-            >
-              {Object.entries(detailTabs).map(([value, label]) => (
-                <TabsTrigger
-                  key={value}
-                  value={value}
-                  className="rounded-none border-0 border-b-2 border-transparent px-2.5 py-3 text-xs font-medium text-muted-foreground shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none sm:text-sm"
-                >
-                  {label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <span className={'folio-status s' + record.stage}>
+              {STAGES[record.stage]}
+            </span>
           </div>
-          <div
-            ref={content}
-            className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:p-5"
+
+          {onNavigate && list.length > 1 && currentIdx >= 0 && (
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="mr-1 text-muted-foreground tabular-nums">
+                Carpeta {currentIdx + 1} de {list.length}
+              </span>
+              <Button
+                size="xs"
+                variant="outline"
+                disabled={!prevRecord}
+                onClick={() => prevRecord && onNavigate(prevRecord)}
+              >
+                <ChevronLeft className="size-3.5" />
+                Anterior
+              </Button>
+              <Button
+                size="xs"
+                variant="outline"
+                disabled={!nextRecord}
+                onClick={() => nextRecord && onNavigate(nextRecord)}
+              >
+                Siguiente
+                <ChevronRight className="size-3.5" />
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div className="min-w-0">
+            <h1 className="font-heading text-2xl leading-tight font-bold tracking-tight break-words sm:text-3xl">
+              {record.name}
+            </h1>
+            <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              <span>Área · {AREA_LABELS[record.area]}</span>
+              <span>Segmento · {record.segment}</span>
+              <span>
+                {record.holders} {record.holders === 1 ? 'titular' : 'titulares'}
+              </span>
+              <span>
+                Analista · <strong className="text-foreground">{record.owner}</strong>
+              </span>
+            </p>
+          </div>
+
+          {/* Executive KPI Strip */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:shrink-0">
+            <button
+              type="button"
+              onClick={() => goEvidence('power-bi')}
+              className="rounded-xl border border-border bg-background px-3 py-2 text-left transition-colors hover:border-primary/50"
+            >
+              <p className="text-[11px] font-medium text-muted-foreground">
+                Exposición
+              </p>
+              <p className="mt-0.5 text-xs font-bold tabular-nums">
+                {pct !== null
+                  ? `${numberLabel(pct)} % (${amountLabel(record.used)})`
+                  : 'Sin vincular'}
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => goEvidence('bcra')}
+              className={cn(
+                'rounded-xl border bg-background px-3 py-2 text-left transition-colors hover:border-primary/50',
+                bcraAlert ? 'border-warning/45' : 'border-border',
+              )}
+            >
+              <p className="text-[11px] font-medium text-muted-foreground">
+                BCRA
+              </p>
+              <p
+                className={cn(
+                  'mt-0.5 text-xs font-bold',
+                  bcraAlert
+                    ? 'text-warning'
+                    : record.source === 'demo'
+                      ? 'text-success'
+                      : 'text-foreground',
+                )}
+              >
+                {bcraBadgeText}
+              </p>
+            </button>
+
+            <div className="rounded-xl border border-border bg-background px-3 py-2">
+              <p className="text-[11px] font-medium text-muted-foreground">
+                Próximo hito
+              </p>
+              <p
+                className={cn(
+                  'mt-0.5 text-xs font-bold tabular-nums',
+                  urgency.tone === 'danger' && 'text-danger',
+                  urgency.tone === 'warning' && 'text-warning',
+                )}
+              >
+                {record.dueDate
+                  ? `${urgency.label}${urgency.relative ? ` · ${urgency.relative}` : ''}`
+                  : 'Sin programar'}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-background px-3 py-2">
+              <p className="text-[11px] font-medium text-muted-foreground">
+                Dictamen
+              </p>
+              <p
+                className={cn(
+                  'mt-0.5 text-xs font-bold',
+                  record.opinion ? 'text-success' : 'text-muted-foreground',
+                )}
+              >
+                {record.opinion ? 'Registrado' : 'Pendiente'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Split Workbench: Left Evidence Dossier + Right Persistent Decision Panel */}
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.65fr)_minmax(340px,1fr)]">
+        {/* Left column: Evidence Dossier */}
+        <section className="min-w-0">
+          <Tabs
+            value={evidenceTab}
+            onValueChange={goEvidence}
+            className="gap-4"
           >
+            <div className="overflow-x-auto border-b border-border">
+              <TabsList
+                className="h-auto w-max gap-1 rounded-none bg-transparent p-0"
+                aria-label="Secciones de evidencia de la carpeta"
+              >
+                {Object.entries(evidenceTabs).map(([value, label]) => (
+                  <TabsTrigger
+                    key={value}
+                    value={value}
+                    className="rounded-none border-0 border-b-2 border-transparent px-4 py-2.5 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
+                  >
+                    {label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+
             <TabsContent value="evaluacion" className="m-0">
-              <CaseEvaluation record={record} go={go} />
+              <CaseEvaluation record={record} go={goEvidence} />
             </TabsContent>
+
             <TabsContent value="power-bi" className="m-0 space-y-4">
               <CasePower record={record} />
-              <SourcesFooter go={go} next="bcra" />
+              <div className="flex flex-wrap justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goEvidence('evaluacion')}
+                >
+                  <ArrowLeft className="size-4" /> Evaluación
+                </Button>
+                <Button size="sm" onClick={() => goEvidence('bcra')}>
+                  Consultar BCRA <ArrowRight className="size-4" />
+                </Button>
+              </div>
             </TabsContent>
+
             <TabsContent
               forceMount
               value="bcra"
-              hidden={tab !== 'bcra'}
+              hidden={evidenceTab !== 'bcra'}
               className="m-0 space-y-4 data-[state=inactive]:hidden"
             >
               {bcraVisited && (
                 <Suspense
                   fallback={
-                    <p role="status" className="text-sm text-muted-foreground">
-                      Cargando la vista del BCRA…
-                    </p>
+                    <Card className={sectionStyle}>
+                      <p role="status" className="text-sm text-muted-foreground">
+                        Cargando la vista del BCRA…
+                      </p>
+                    </Card>
                   }
                 >
                   <CaseBcra record={record} initialReal={initialReal} />
                 </Suspense>
               )}
-              <SourcesFooter go={go} next="dictamen" />
+              <div className="flex flex-wrap justify-start gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goEvidence('evaluacion')}
+                >
+                  <ArrowLeft className="size-4" /> Volver a Evaluación
+                </Button>
+              </div>
             </TabsContent>
-            <TabsContent
-              forceMount
-              value="consultas"
-              hidden={tab !== 'consultas'}
-              className="m-0 data-[state=inactive]:hidden"
-            >
-              <CaseQuestions record={record} go={go} />
-            </TabsContent>
-            <TabsContent
-              forceMount
-              value="dictamen"
-              hidden={tab !== 'dictamen'}
-              className="m-0 data-[state=inactive]:hidden"
-            >
-              <OpinionPanel
-                record={record}
-                onSaveOpinion={onSaveOpinion}
-                go={go}
-              />
-            </TabsContent>
-          </div>
-        </Tabs>
-      </DialogContent>
-    </Dialog>
-  );
-}
+          </Tabs>
+        </section>
 
-function SourcesFooter({
-  go,
-  next,
-}: {
-  go(tab: CaseTab): void;
-  next: 'bcra' | 'dictamen';
-}) {
-  return (
-    <div className="flex flex-wrap justify-end gap-2">
-      <Button variant="outline" onClick={() => go('evaluacion')}>
-        <ArrowLeft className="size-4" /> Evaluación
-      </Button>
-      <Button onClick={() => go(next)}>
-        {next === 'bcra' ? 'Consultar BCRA' : 'Ir al dictamen'}
-        <ArrowRight className="size-4" />
-      </Button>
-    </div>
+        {/* Right column: Persistent Decision & AI Panel */}
+        <aside className="min-w-0 lg:sticky lg:top-20">
+          <Card className="gap-0 overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-none">
+            <div
+              className="grid grid-cols-2 border-b border-border bg-muted/40"
+              role="tablist"
+              aria-label="Panel de decisión"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={decisionTab === 'dictamen'}
+                onClick={() => setDecisionTab('dictamen')}
+                className={cn(
+                  'inline-flex items-center justify-center gap-1.5 border-b-2 py-3 text-xs font-semibold transition-colors',
+                  decisionTab === 'dictamen'
+                    ? 'border-primary bg-card text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <FileText className="size-3.5" aria-hidden="true" />
+                Dictamen
+                {record.opinion && (
+                  <CheckCircle2
+                    className="size-3.5 text-success"
+                    aria-label="Registrado"
+                  />
+                )}
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={decisionTab === 'consultas'}
+                onClick={() => setDecisionTab('consultas')}
+                className={cn(
+                  'inline-flex items-center justify-center gap-1.5 border-b-2 py-3 text-xs font-semibold transition-colors',
+                  decisionTab === 'consultas'
+                    ? 'border-primary bg-card text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <Sparkles className="size-3.5" aria-hidden="true" />
+                Consultas IA
+              </button>
+            </div>
+
+            <div hidden={decisionTab !== 'dictamen'}>
+              <OpinionPanel record={record} onSaveOpinion={onSaveOpinion} />
+            </div>
+            <div hidden={decisionTab !== 'consultas'}>
+              <CaseQuestions record={record} goEvidence={goEvidence} />
+            </div>
+          </Card>
+        </aside>
+      </div>
+    </article>
   );
 }
